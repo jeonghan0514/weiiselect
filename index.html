@@ -27,7 +27,7 @@
     header {
       background: linear-gradient(135deg, var(--poke-red), #EF5350);
       color: white;
-      padding: 16px;
+      padding: 16px 12px;
       border-radius: 16px;
       text-align: center;
       box-shadow: 0 4px 12px rgba(229, 57, 53, 0.15);
@@ -35,11 +35,11 @@
       border-bottom: 4px solid var(--poke-yellow);
       position: relative;
     }
-    header h1 { margin: 0; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; }
+    header h1 { margin: 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.5px; padding-right: 40px; }
     
     .logout-btn {
-      position: absolute; right: 12px; top: 14px;
-      background: rgba(255,255,255,0.2); color: white; border: 1px solid white;
+      position: absolute; right: 10px; top: 12px;
+      background: rgba(255,255,255,0.25); color: white; border: 1px solid white;
       padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;
     }
 
@@ -76,17 +76,24 @@
     }
     .card h2 { font-size: 1.05rem; margin-top: 0; margin-bottom: 12px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center; }
 
-    /* 表單元件 */
-    .form-group { margin-bottom: 10px; display: flex; flex-direction: column; }
+    /* 表單元件 (修正手機 date 寬度溢出) */
+    .form-group { margin-bottom: 10px; display: flex; flex-direction: column; min-width: 0; }
     .form-group label { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 4px; font-weight: bold; }
     .form-group input, .form-group select {
       padding: 10px; border: 1.5px solid var(--border-color);
       border-radius: 8px; font-size: 0.9rem; outline: none; background-color: #FAFAFA;
-      width: 100%;
+      width: 100%; -webkit-appearance: none;
+    }
+    .form-group input[type="date"] {
+      padding: 8px 10px;
+      min-height: 42px;
     }
     .form-group input:focus, .form-group select:focus {
       border-color: var(--poke-blue); background-color: #FFFFFF;
     }
+    
+    /* 調整日期的網格比例：日期 65% / 代墊人 35% */
+    .date-row { display: grid; grid-template-columns: 1.8fr 1fr; gap: 8px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
     /* 快捷標籤 */
@@ -119,21 +126,19 @@
     }
     .btn-main:disabled { background: #CFD8DC; box-shadow: none; }
 
-    /* 精簡極簡明細卡片 */
+    /* 精簡明細卡片 */
     .product-item {
       background: #FAFAFA; border: 1px solid var(--border-color); padding: 10px 12px;
       border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
     }
-    .item-left { display: flex; flex-direction: column; gap: 3px; max-width: 70%; }
+    .item-left { display: flex; flex-direction: column; gap: 3px; max-width: 68%; }
     
-    /* 第一行：購買人 + 商品名稱 */
     .item-row-1 { display: flex; align-items: center; gap: 6px; }
     .buyer-badge { background: var(--soft-blue); color: var(--poke-blue); font-size: 0.75rem; padding: 1px 6px; border-radius: 4px; font-weight: bold; flex-shrink: 0; }
     .item-title { font-size: 0.92rem; font-weight: bold; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    /* 第二行：類別 + 成本金額 + 代墊人 (簡潔微灰色調) */
     .item-row-2 { font-size: 0.78rem; color: var(--text-sub); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-    .item-row-2 span { color: #B0BEC5; } /* 分隔點顏色 */
+    .item-row-2 span { color: #B0BEC5; }
 
     .item-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
     .twd-price { color: var(--poke-red); font-weight: bold; font-size: 1rem; }
@@ -233,7 +238,7 @@
       <div class="card">
         <h2>⚡ 新增代購商品</h2>
         
-        <div class="form-row">
+        <div class="date-row">
           <div class="form-group">
             <label>購買日期</label>
             <input type="date" id="purchaseDate">
@@ -321,7 +326,7 @@
       </div>
     </div>
 
-    <!-- 分頁二：獨立採購明細頁面 -->
+    <!-- 分頁二：採購明細 -->
     <div id="tab-list" class="tab-content">
       <div class="card">
         <h2>
@@ -365,7 +370,6 @@
           </div>
         </div>
 
-        <!-- 一修與大緯 拆帳專區 -->
         <div class="stat-grid" style="margin-top: 10px;">
           <div class="stat-box">
             <div class="title">一修 總代墊金額</div>
@@ -394,7 +398,7 @@
       <button class="close-modal-btn" onclick="closeEditModal()">✕</button>
     </div>
 
-    <div class="form-row">
+    <div class="date-row">
       <div class="form-group">
         <label>購買日期</label>
         <input type="date" id="m_purchaseDate">
@@ -732,7 +736,6 @@
     navigator.clipboard.writeText(text).then(() => alert(`已複製 ${buyerName} 的分類帳單！`));
   };
 
-  // 渲染極簡明細卡片
   window.renderProductList = function() {
     const productList = document.getElementById('productList');
     const filterDate = document.getElementById('dateFilter').value;
@@ -756,17 +759,14 @@
       entryHtml += `
         <div class="product-item">
           <div class="item-left">
-            <!-- 第一行：購買人 + 商品名稱 -->
             <div class="item-row-1">
               <span class="buyer-badge">${item.buyer}</span>
               <span class="item-title">${item.title}</span>
             </div>
-            <!-- 第二行：類別 + 成本金額 + 代墊人 -->
             <div class="item-row-2">
               ${tInfo.icon} ${tInfo.name} <span>‧</span> ¥${item.priceJpy || 0} (${payText} NT$${item.costTwd}) <span>‧</span> ${itemPayer}
             </div>
           </div>
-          <!-- 右側：台幣售價 + 利潤 + 按鈕 -->
           <div class="item-right">
             <div class="twd-price">NT$ ${item.priceTwd}</div>
             <span class="profit-badge">賺 NT$${item.profitTwd}</span>
