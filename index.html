@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🇯🇵 日本現場代購助手</title>
+  <title>🇯🇵 日本現場代購助手 · 成本利潤版</title>
   <style>
     :root {
       --poke-red: #E53935;
-      --poke-red-light: #FFEBEE;
       --poke-yellow: #FFC107;
       --poke-yellow-light: #FFF8E1;
       --poke-blue: #1976D2;
+      --poke-green: #2E7D32;
       --bg-color: #F8F9FA;
       --card-bg: #FFFFFF;
       --text-main: #37474F;
@@ -22,213 +22,200 @@
     body { background-color: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); }
     .container { max-width: 480px; margin: 0 auto; }
 
-    /* 溫和明亮 Header (移除黑色) */
+    /* Header */
     header {
       background: linear-gradient(135deg, var(--poke-red), #EF5350);
       color: white;
-      padding: 18px 16px;
+      padding: 16px;
       border-radius: 16px;
       text-align: center;
       box-shadow: 0 4px 12px rgba(229, 57, 53, 0.15);
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       border-bottom: 4px solid var(--poke-yellow);
     }
-    header h1 { margin: 0; font-size: 1.25rem; letter-spacing: 1px; font-weight: 700; }
+    header h1 { margin: 0; font-size: 1.2rem; font-weight: 700; }
 
-    /* 分頁標籤 (Tabs) */
+    /* 分頁標籤 (3 Tab Layout) */
     .tab-group {
       display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
+      gap: 6px;
+      margin-bottom: 14px;
     }
     .tab-btn {
       flex: 1;
-      padding: 12px;
+      padding: 10px 4px;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      font-size: 0.95rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
       font-weight: bold;
       color: var(--text-sub);
       cursor: pointer;
-      transition: all 0.2s;
+      text-align: center;
     }
     .tab-btn.active {
       background: var(--poke-red);
       color: white;
       border-color: var(--poke-red);
-      box-shadow: 0 3px 8px rgba(229, 57, 53, 0.2);
+      box-shadow: 0 2px 6px rgba(229, 57, 53, 0.2);
     }
 
     /* 主卡片樣式 */
     .card {
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 18px;
-      margin-bottom: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
       border: 1px solid var(--border-color);
     }
-    .card h2 { font-size: 1.05rem; margin-top: 0; margin-bottom: 14px; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
+    .card h2 { font-size: 1.05rem; margin-top: 0; margin-bottom: 12px; color: var(--text-main); }
 
-    /* 表單佈置：併排優化 */
-    .form-group { margin-bottom: 12px; display: flex; flex-direction: column; }
-    .form-group label { font-size: 0.85rem; color: var(--text-sub); margin-bottom: 6px; font-weight: bold; }
+    /* 表單佈置 */
+    .form-group { margin-bottom: 10px; display: flex; flex-direction: column; }
+    .form-group label { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 4px; font-weight: bold; }
     .form-group input, .form-group select {
-      padding: 11px;
+      padding: 10px;
       border: 1.5px solid var(--border-color);
-      border-radius: 10px;
-      font-size: 0.95rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
       outline: none;
       background-color: #FAFAFA;
-      transition: border-color 0.2s, background-color 0.2s;
     }
     .form-group input:focus, .form-group select:focus {
       border-color: var(--poke-blue);
       background-color: #FFFFFF;
     }
 
-    /* 兩欄併排容器 */
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-    /* 快捷買家標籤 */
+    /* 買家快捷標籤 */
     .quick-buyer-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
     .tag-btn {
       background: var(--poke-yellow-light);
       color: #B78103;
       border: 1px solid #FFE082;
       border-radius: 8px;
-      padding: 4px 10px;
-      font-size: 0.8rem;
+      padding: 3px 8px;
+      font-size: 0.78rem;
       font-weight: bold;
       cursor: pointer;
     }
-    .tag-btn:hover { background: var(--poke-yellow); color: #37474F; }
 
-    /* 價格預覽區 */
+    /* 價格與利潤試算區 */
     .price-box {
       background: var(--poke-yellow-light);
       border: 1.5px dashed #FFD54F;
-      padding: 12px;
+      padding: 10px;
       border-radius: 10px;
-      color: #C62828;
-      font-size: 1.05rem;
-      text-align: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
+    .price-main { text-align: center; color: #C62828; font-size: 1.1rem; margin-bottom: 6px; }
+    .profit-detail {
+      display: flex;
+      justify-content: space-around;
+      font-size: 0.82rem;
+      border-top: 1px dashed #FFE082;
+      padding-top: 6px;
+      color: #555;
+    }
+    .profit-detail span strong { color: var(--poke-green); }
 
-    /* 按鈕樣式 */
+    /* 按鈕 */
     .btn-main {
       width: 100%;
-      padding: 13px;
+      padding: 12px;
       background: var(--poke-red);
       color: white;
       border: none;
       border-radius: 10px;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: bold;
       cursor: pointer;
       box-shadow: 0 3px 8px rgba(229, 57, 53, 0.2);
     }
     .btn-main:disabled { background: #CFD8DC; box-shadow: none; }
 
-    /* 採購明細清單 */
+    /* 清單列表 */
     .product-item {
       background: #FAFAFA;
       border: 1px solid var(--border-color);
-      padding: 12px;
+      padding: 10px;
       border-radius: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .buyer-badge {
-      background: #E3F2FD;
-      color: var(--poke-blue);
-      font-size: 0.75rem;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-weight: bold;
-    }
-    .type-badge {
-      font-size: 0.75rem;
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-left: 4px;
-      font-weight: bold;
-    }
+    .buyer-badge { background: #E3F2FD; color: var(--poke-blue); font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+    .type-badge { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; margin-left: 4px; font-weight: bold; }
     .badge-merch { background: #E1F5FE; color: #0288D1; }
     .badge-gachapon { background: #E8F5E9; color: #2E7D32; }
     .badge-ichiban { background: #FFF3E0; color: #EF6C00; }
 
-    .twd-price { color: var(--poke-red); font-weight: bold; font-size: 1.05rem; }
-    .btn-delete { background: #FFCDD2; color: #C62828; border: none; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-left: 8px; }
+    .twd-price { color: var(--poke-red); font-weight: bold; font-size: 1rem; }
+    .profit-badge { font-size: 0.75rem; color: var(--poke-green); font-weight: bold; display: block; text-align: right; }
+    .btn-delete { background: #FFCDD2; color: #C62828; border: none; padding: 4px 6px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin-left: 6px; }
 
-    /* 買家統計頁面佈置 */
+    /* 對帳與統計頁面 */
     .buyer-summary-card {
       background: var(--card-bg);
-      border-radius: 14px;
+      border-radius: 12px;
       border: 1px solid var(--border-color);
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      padding: 14px;
+      margin-bottom: 12px;
     }
     .buyer-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 2px solid var(--poke-yellow-light);
-      padding-bottom: 8px;
-      margin-bottom: 12px;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
     }
-    .buyer-name { font-size: 1.05rem; font-weight: bold; color: var(--text-main); }
-    .buyer-total { font-size: 1.15rem; font-weight: bold; color: var(--poke-red); }
+    .buyer-name { font-size: 1rem; font-weight: bold; }
+    .buyer-total { font-size: 1.1rem; font-weight: bold; color: var(--poke-red); }
 
-    /* 分類區塊（圓角柔和風） */
     .category-block {
       background: #FAFAFA;
-      border-radius: 10px;
-      padding: 10px 12px;
-      margin-bottom: 10px;
-      border: 1px solid #F0F0F0;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
       border-left: 4px solid #CCC;
     }
     .category-block.cat-merch { border-left-color: #0288D1; }
     .category-block.cat-gachapon { border-left-color: #2E7D32; }
     .category-block.cat-ichiban { border-left-color: #EF6C00; }
 
-    .category-title {
-      font-size: 0.85rem;
-      font-weight: bold;
-      color: var(--text-sub);
-      margin-bottom: 6px;
-      display: flex;
-      justify-content: space-between;
-    }
-    .category-item {
-      font-size: 0.9rem;
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 4px;
-    }
+    .category-title { font-size: 0.8rem; font-weight: bold; color: var(--text-sub); margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .category-item { font-size: 0.85rem; display: flex; justify-content: space-between; margin-bottom: 2px; }
 
     .btn-copy {
-      margin-top: 10px;
+      margin-top: 8px;
       width: 100%;
       background: var(--poke-yellow);
       color: #37474F;
       border: none;
-      padding: 10px;
-      border-radius: 10px;
-      font-size: 0.9rem;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 0.85rem;
       font-weight: bold;
       cursor: pointer;
     }
+
+    /* 利潤統計大卡片 */
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .stat-box {
+      background: #FAFAFA;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-box .title { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 4px; }
+    .stat-box .number { font-size: 1.15rem; font-weight: bold; }
+    .stat-box.highlight { background: #E8F5E9; border-color: #A5D6A7; }
+    .stat-box.highlight .number { color: var(--poke-green); }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
@@ -241,13 +228,14 @@
     <h1>⚡ 日本現場代購助手</h1>
   </header>
 
-  <!-- 分頁按鈕 -->
+  <!-- 三大分頁標籤 -->
   <div class="tab-group">
     <button class="tab-btn active" onclick="switchTab('tab-entry')">📝 採購登記</button>
     <button class="tab-btn" onclick="switchTab('tab-summary')">📊 買家對帳</button>
+    <button class="tab-btn" onclick="switchTab('tab-profit')">📈 成本利潤</button>
   </div>
 
-  <!-- 分頁一：登記表單與列表 -->
+  <!-- 分頁一：採購登記表單 -->
   <div id="tab-entry" class="tab-content active">
     <div class="card">
       <h2>⚡ 新增代購商品</h2>
@@ -263,7 +251,6 @@
         <input type="text" id="title" placeholder="例如：皮卡丘公仔">
       </div>
 
-      <!-- 併排佈置：類型與價格 -->
       <div class="form-row">
         <div class="form-group">
           <label>計價類型</label>
@@ -275,13 +262,32 @@
         </div>
 
         <div class="form-group">
-          <label>日幣價格 (¥)</label>
-          <input type="number" id="priceJpy" placeholder="例如：500" oninput="calcPrice()">
+          <label>日幣標價 (¥)</label>
+          <input type="number" id="priceJpy" placeholder="500" oninput="calcPrice()">
         </div>
       </div>
 
+      <div class="form-row">
+        <div class="form-group">
+          <label>實付匯率 (刷卡/現金)</label>
+          <input type="number" id="costRate" value="0.205" step="0.001" oninput="calcPrice()">
+        </div>
+
+        <div class="form-group">
+          <label>折扣金額 (¥ 折抵)</label>
+          <input type="number" id="discountJpy" value="0" placeholder="0" oninput="calcPrice()">
+        </div>
+      </div>
+
+      <!-- 售價與利潤即時計算 -->
       <div class="price-box">
-        算得台幣售價：<strong id="priceTwd">NT$ 0</strong>
+        <div class="price-main">
+          台幣售價：<strong id="priceTwd">NT$ 0</strong>
+        </div>
+        <div class="profit-detail">
+          <span>採購成本: <span id="costTwd">NT$ 0</span></span>
+          <span>預估淨利: <strong id="profitTwd">NT$ 0</strong></span>
+        </div>
       </div>
 
       <button class="btn-main" id="submitBtn" onclick="submitProduct()">⚡ 確認儲存紀錄</button>
@@ -300,9 +306,40 @@
       <div id="buyerSummaryList">載入中...</div>
     </div>
   </div>
+
+  <!-- 分頁三：成本與利潤統計分析 -->
+  <div id="tab-profit" class="tab-content">
+    <div class="card">
+      <h2>📈 整體代購營運統計</h2>
+      
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="title">總採購筆數</div>
+          <div class="number" id="statTotalCount">0 筆</div>
+        </div>
+        <div class="stat-box">
+          <div class="title">總代購營業額</div>
+          <div class="number" id="statTotalRevenue" style="color: var(--poke-red);">NT$ 0</div>
+        </div>
+        <div class="stat-box">
+          <div class="title">總採購成本</div>
+          <div class="number" id="statTotalCost" style="color: var(--poke-blue);">NT$ 0</div>
+        </div>
+        <div class="stat-box highlight">
+          <div class="title">淨利潤 (獲利)</div>
+          <div class="number" id="statTotalProfit">NT$ 0</div>
+        </div>
+      </div>
+
+      <div class="stat-box">
+        <div class="title">平均毛利率</div>
+        <div class="number" id="statMargin">0 %</div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- 載入 Firebase Realtime Database SDK -->
+<!-- 載入 Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -324,7 +361,7 @@
 
   let currentProducts = [];
 
-  // 扭蛋對照表
+  // 扭蛋售價對照表
   const gachaponTable = {
     100: 40, 200: 70, 300: 100, 400: 130, 500: 160,
     600: 200, 700: 220, 800: 250, 1000: 300, 2000: 580
@@ -336,16 +373,15 @@
     ichiban: { name: '一番賞', badgeClass: 'badge-ichiban', catClass: 'cat-ichiban', icon: '🎟️' }
   };
 
-  // 分頁切換
   window.switchTab = function(tabId) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-    if (tabId === 'tab-entry') {
-      document.querySelectorAll('.tab-btn')[0].classList.add('active');
-    } else {
-      document.querySelectorAll('.tab-btn')[1].classList.add('active');
-    }
+    const btns = document.querySelectorAll('.tab-btn');
+    if (tabId === 'tab-entry') btns[0].classList.add('active');
+    if (tabId === 'tab-summary') btns[1].classList.add('active');
+    if (tabId === 'tab-profit') btns[2].classList.add('active');
+
     document.getElementById(tabId).classList.add('active');
   };
 
@@ -353,32 +389,42 @@
     document.getElementById('buyer').value = name;
   };
 
-  // 算價邏輯
+  // 即時計算售價、成本與利潤
   window.calcPrice = function() {
     const type = document.getElementById('type').value;
     const jpy = Number(document.getElementById('priceJpy').value) || 0;
-    let twd = 0;
+    const rate = Number(document.getElementById('costRate').value) || 0.205;
+    const discount = Number(document.getElementById('discountJpy').value) || 0;
 
+    let twd = 0;
     if (type === 'gachapon') {
       twd = gachaponTable[jpy] || Math.ceil(jpy * 0.27);
     } else {
       twd = Math.ceil(jpy * 0.27);
     }
 
+    // 計算實際日幣花費與台幣成本
+    const actualJpy = Math.max(0, jpy - discount);
+    const costTwd = Math.ceil(actualJpy * rate);
+    const profitTwd = twd - costTwd;
+
     document.getElementById('priceTwd').innerText = `NT$ ${twd}`;
-    return twd;
+    document.getElementById('costTwd').innerText = `NT$ ${costTwd}`;
+    document.getElementById('profitTwd').innerText = `NT$ ${profitTwd}`;
+
+    return { twd, costTwd, profitTwd };
   };
 
-  // 儲存商品
+  // 提交商品
   window.submitProduct = async function() {
     const buyer = document.getElementById('buyer').value.trim();
     const title = document.getElementById('title').value.trim();
     const priceJpy = Number(document.getElementById('priceJpy').value);
     const type = document.getElementById('type').value;
-    const priceTwd = window.calcPrice();
+    const { twd, costTwd, profitTwd } = window.calcPrice();
 
     if (!buyer || !title || !priceJpy) {
-      alert('請填寫「購買人」、「商品名稱」與「日幣價格」！');
+      alert('請填寫「購買人」、「商品名稱」與「日幣金額」！');
       return;
     }
 
@@ -388,11 +434,10 @@
 
     try {
       await push(productsRef, {
-        buyer: buyer,
-        title: title,
-        type: type,
-        priceJpy: priceJpy,
-        priceTwd: priceTwd,
+        buyer, title, type, priceJpy,
+        priceTwd: twd,
+        costTwd: costTwd,
+        profitTwd: profitTwd,
         createdAt: Date.now()
       });
 
@@ -401,14 +446,13 @@
       window.calcPrice();
     } catch (e) {
       console.error(e);
-      alert('儲存失敗，請檢查網路！');
+      alert('儲存失敗！');
     } finally {
       btn.disabled = false;
       btn.innerText = '⚡ 確認儲存紀錄';
     }
   };
 
-  // 刪除商品
   window.deleteProduct = function(key) {
     if (confirm('確定要刪除這筆紀錄嗎？')) {
       const itemRef = ref(db, `products/${key}`);
@@ -416,17 +460,14 @@
     }
   };
 
-  // 複製對帳文字
   window.copyBuyerDetails = function(buyerName, total, copyText) {
     const text = `【日本代購對帳單 - ${buyerName}】\n-------------------\n${copyText}-------------------\n合計台幣：NT$ ${total}`;
     navigator.clipboard.writeText(text).then(() => {
       alert(`已複製 ${buyerName} 的分類帳單！`);
-    }).catch(() => {
-      alert('複製失敗，請手動複製');
     });
   };
 
-  // 即時資料處理
+  // 資料即時更新繪製
   onValue(productsRef, (snapshot) => {
     const data = snapshot.val();
     const productList = document.getElementById('productList');
@@ -437,28 +478,32 @@
       productList.innerHTML = '<p style="color:#888; text-align:center;">目前無採購紀錄</p>';
       buyerSummaryList.innerHTML = '<p style="color:#888; text-align:center;">尚無買家資料</p>';
       quickBuyerTags.innerHTML = '';
+      updateStatics([]);
       return;
     }
 
     currentProducts = Object.keys(data).map(key => ({ key, ...data[key] })).reverse();
 
-    // 1. 渲染即時列表
+    // 1. 即時列表
     let entryHtml = '';
     const buyerSet = new Set();
 
     currentProducts.forEach(item => {
       buyerSet.add(item.buyer);
       const tInfo = typeMap[item.type] || typeMap.merch;
+      const profit = item.profitTwd !== undefined ? item.profitTwd : (item.priceTwd - Math.ceil(item.priceJpy * 0.205));
+
       entryHtml += `
         <div class="product-item">
           <div>
             <span class="buyer-badge">${item.buyer}</span>
             <strong style="margin-left: 4px;">${item.title}</strong>
             <span class="type-badge ${tInfo.badgeClass}">${tInfo.icon} ${tInfo.name}</span>
-            <div style="color: #78909C; font-size: 0.85rem; margin-top:4px;">¥ ${item.priceJpy}</div>
+            <div style="color: #78909C; font-size: 0.8rem; margin-top:2px;">¥ ${item.priceJpy} (成本 NT$${item.costTwd || Math.ceil(item.priceJpy * 0.205)})</div>
           </div>
           <div style="text-align: right;">
             <div class="twd-price">NT$ ${item.priceTwd}</div>
+            <span class="profit-badge">賺 NT$${profit}</span>
             <button class="btn-delete" onclick="deleteProduct('${item.key}')">刪除</button>
           </div>
         </div>
@@ -466,21 +511,18 @@
     });
     productList.innerHTML = entryHtml;
 
-    // 2. 買家快捷標籤
+    // 2. 買家標籤
     let tagsHtml = '';
     buyerSet.forEach(name => {
       tagsHtml += `<button class="tag-btn" type="button" onclick="setBuyer('${name}')">+ ${name}</button>`;
     });
     quickBuyerTags.innerHTML = tagsHtml;
 
-    // 3. 依「買家」與「類別」雙重歸類統計
+    // 3. 對帳頁面
     const buyerMap = {};
     currentProducts.forEach(item => {
       if (!buyerMap[item.buyer]) {
-        buyerMap[item.buyer] = {
-          total: 0,
-          categories: { merch: [], gachapon: [], ichiban: [] }
-        };
+        buyerMap[item.buyer] = { total: 0, categories: { merch: [], gachapon: [], ichiban: [] } };
       }
       const itemType = item.type || 'merch';
       buyerMap[item.buyer].categories[itemType].push(item);
@@ -521,7 +563,6 @@
               ${catItemsHtml}
             </div>
           `;
-
           copyTextFull += `${catCopyText}  小計：NT$ ${catTotal}\n\n`;
         }
       });
@@ -534,13 +575,36 @@
           </div>
           ${blocksHtml}
           <button class="btn-copy" onclick="copyBuyerDetails('${buyerName}', ${group.total}, \`${copyTextFull}\`)">
-            📋 複製 ${buyerName} 的分類帳單
+            📋 複製 ${buyerName} 的帳單
           </button>
         </div>
       `;
     });
     buyerSummaryList.innerHTML = summaryHtml;
+
+    // 4. 計算總成本與利潤統計
+    updateStatics(currentProducts);
   });
+
+  // 更新成本利潤分頁資料
+  function updateStatics(items) {
+    let totalRevenue = 0;
+    let totalCost = 0;
+
+    items.forEach(it => {
+      totalRevenue += it.priceTwd || 0;
+      totalCost += it.costTwd || Math.ceil(it.priceJpy * 0.205);
+    });
+
+    const totalProfit = totalRevenue - totalCost;
+    const margin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
+
+    document.getElementById('statTotalCount').innerText = `${items.length} 筆`;
+    document.getElementById('statTotalRevenue').innerText = `NT$ ${totalRevenue}`;
+    document.getElementById('statTotalCost').innerText = `NT$ ${totalCost}`;
+    document.getElementById('statTotalProfit').innerText = `NT$ ${totalProfit}`;
+    document.getElementById('statMargin').innerText = `${margin} %`;
+  }
 </script>
 
 </body>
