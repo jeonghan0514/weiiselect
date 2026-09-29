@@ -12,22 +12,12 @@
       --poke-blue: #1976D2;
       --bg-color: #F8F9FA;
       --card-bg: #FFFFFF;
-      --text-main: #37474F;
-      --text-sub: #78909C;
+      --text-main: #2C3E50;
+      --text-sub: #7F8C8D;
       --border-color: #ECEFF1;
 
-      /* 柔和粉彩標籤色系 (調降飽和度) */
-      --soft-merch-bg: #E3F2FD;
-      --soft-merch-text: #0277BD;
-      
-      --soft-gachapon-bg: #E8F5E9;
-      --soft-gachapon-text: #2E7D32;
-      
-      --soft-ichiban-bg: #FFF3E0;
-      --soft-ichiban-text: #E65100;
-
-      --soft-payer-bg: #F3E5F5;
-      --soft-payer-text: #6A1B9A;
+      --soft-blue: #E3F2FD;
+      --soft-green: #2E7D32;
     }
 
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -120,7 +110,7 @@
       display: flex; justify-content: space-around; font-size: 0.82rem;
       border-top: 1px dashed #FFE082; padding-top: 6px; color: #555;
     }
-    .profit-detail span strong { color: var(--poke-green); }
+    .profit-detail span strong { color: var(--soft-green); }
 
     .btn-main {
       width: 100%; padding: 12px; background: var(--poke-red); color: white;
@@ -129,39 +119,38 @@
     }
     .btn-main:disabled { background: #CFD8DC; box-shadow: none; }
 
-    /* 明細卡片排版與柔和標籤 */
+    /* 精簡極簡明細卡片 */
     .product-item {
-      background: #FAFAFA; border: 1px solid var(--border-color); padding: 12px;
-      border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+      background: #FAFAFA; border: 1px solid var(--border-color); padding: 10px 12px;
+      border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
     }
-    .item-left { display: flex; flex-direction: column; gap: 4px; }
-    .item-row-1 { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .item-row-2 { font-size: 0.8rem; color: var(--text-sub); display: flex; align-items: center; gap: 6px; }
-
-    .buyer-badge { background: #E3F2FD; color: var(--poke-blue); font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-    .payer-badge { background: var(--soft-payer-bg); color: var(--soft-payer-text); font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+    .item-left { display: flex; flex-direction: column; gap: 3px; max-width: 70%; }
     
-    .type-badge { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-    .badge-merch { background: var(--soft-merch-bg); color: var(--soft-merch-text); }
-    .badge-gachapon { background: var(--soft-gachapon-bg); color: var(--soft-gachapon-text); }
-    .badge-ichiban { background: var(--soft-ichiban-bg); color: var(--soft-ichiban-text); }
+    /* 第一行：購買人 + 商品名稱 */
+    .item-row-1 { display: flex; align-items: center; gap: 6px; }
+    .buyer-badge { background: var(--soft-blue); color: var(--poke-blue); font-size: 0.75rem; padding: 1px 6px; border-radius: 4px; font-weight: bold; flex-shrink: 0; }
+    .item-title { font-size: 0.92rem; font-weight: bold; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    .item-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
-    .twd-price { color: var(--poke-red); font-weight: bold; font-size: 1.05rem; }
-    .profit-badge { font-size: 0.75rem; color: var(--poke-green); font-weight: bold; }
+    /* 第二行：類別 + 成本金額 + 代墊人 (簡潔微灰色調) */
+    .item-row-2 { font-size: 0.78rem; color: var(--text-sub); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .item-row-2 span { color: #B0BEC5; } /* 分隔點顏色 */
+
+    .item-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+    .twd-price { color: var(--poke-red); font-weight: bold; font-size: 1rem; }
+    .profit-badge { font-size: 0.72rem; color: var(--soft-green); font-weight: bold; }
     
-    .action-btns { margin-top: 4px; display: flex; gap: 4px; }
-    .btn-edit { background: #E0E0E0; color: #424242; border: none; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; }
-    .btn-delete { background: #FFCDD2; color: #C62828; border: none; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; }
+    .action-btns { margin-top: 2px; display: flex; gap: 4px; }
+    .btn-edit { background: #ECEFF1; color: #546E7A; border: none; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
+    .btn-delete { background: #FFEBEE; color: #C62828; border: none; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
 
-    /* 對帳區柔和顏色邊條 */
+    /* 對帳區 */
     .buyer-summary-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 14px; margin-bottom: 12px; }
     .buyer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--poke-yellow-light); padding-bottom: 6px; margin-bottom: 10px; }
     .buyer-name { font-size: 1rem; font-weight: bold; }
     .buyer-total { font-size: 1.1rem; font-weight: bold; color: var(--poke-red); }
 
-    .category-block { background: #FAFAFA; border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; border-left: 4px solid #CCC; }
-    .category-block.cat-merch { border-left-color: #81D4FA; }
+    .category-block { background: #FAFAFA; border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; border-left: 3px solid #B0BEC5; }
+    .category-block.cat-merch { border-left-color: #90CAF9; }
     .category-block.cat-gachapon { border-left-color: #A5D6A7; }
     .category-block.cat-ichiban { border-left-color: #FFCC80; }
 
@@ -176,7 +165,7 @@
     .stat-box .title { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 4px; }
     .stat-box .number { font-size: 1.15rem; font-weight: bold; }
     .stat-box.highlight { background: #E8F5E9; border-color: #A5D6A7; }
-    .stat-box.highlight .number { color: var(--poke-green); }
+    .stat-box.highlight .number { color: var(--soft-green); }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
@@ -380,11 +369,11 @@
         <div class="stat-grid" style="margin-top: 10px;">
           <div class="stat-box">
             <div class="title">一修 總代墊金額</div>
-            <div class="number" id="statPayerXiu" style="color: var(--soft-payer-text);">NT$ 0</div>
+            <div class="number" id="statPayerXiu" style="color: #6A1B9A;">NT$ 0</div>
           </div>
           <div class="stat-box">
             <div class="title">大緯 總代墊金額</div>
-            <div class="number" id="statPayerWei" style="color: var(--soft-payer-text);">NT$ 0</div>
+            <div class="number" id="statPayerWei" style="color: #6A1B9A;">NT$ 0</div>
           </div>
         </div>
 
@@ -524,10 +513,10 @@
   };
 
   const typeMap = {
-    merch: { name: '商品', badgeClass: 'badge-merch', catClass: 'cat-merch', icon: '🛍️' },
-    custom: { name: '商品(自訂)', badgeClass: 'badge-merch', catClass: 'cat-merch', icon: '🌸' },
-    gachapon: { name: '扭蛋', badgeClass: 'badge-gachapon', catClass: 'cat-gachapon', icon: '🎰' },
-    ichiban: { name: '一番賞', badgeClass: 'badge-ichiban', catClass: 'cat-ichiban', icon: '🎟️' }
+    merch: { name: '商品', icon: '🛍️' },
+    custom: { name: '商品', icon: '🌸' },
+    gachapon: { name: '扭蛋', icon: '🎰' },
+    ichiban: { name: '一番賞', icon: '🎟️' }
   };
 
   document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
@@ -743,6 +732,7 @@
     navigator.clipboard.writeText(text).then(() => alert(`已複製 ${buyerName} 的分類帳單！`));
   };
 
+  // 渲染極簡明細卡片
   window.renderProductList = function() {
     const productList = document.getElementById('productList');
     const filterDate = document.getElementById('dateFilter').value;
@@ -766,17 +756,17 @@
       entryHtml += `
         <div class="product-item">
           <div class="item-left">
+            <!-- 第一行：購買人 + 商品名稱 -->
             <div class="item-row-1">
               <span class="buyer-badge">${item.buyer}</span>
-              <span class="type-badge ${tInfo.badgeClass}">${tInfo.icon} ${tInfo.name}</span>
-              <strong>${item.title}</strong>
+              <span class="item-title">${item.title}</span>
             </div>
+            <!-- 第二行：類別 + 成本金額 + 代墊人 -->
             <div class="item-row-2">
-              <span>¥ ${item.priceJpy || 0} (${payText})</span>
-              <span>|</span>
-              <span class="payer-badge">${itemPayer}</span>
+              ${tInfo.icon} ${tInfo.name} <span>‧</span> ¥${item.priceJpy || 0} (${payText} NT$${item.costTwd}) <span>‧</span> ${itemPayer}
             </div>
           </div>
+          <!-- 右側：台幣售價 + 利潤 + 按鈕 -->
           <div class="item-right">
             <div class="twd-price">NT$ ${item.priceTwd}</div>
             <span class="profit-badge">賺 NT$${item.profitTwd}</span>
