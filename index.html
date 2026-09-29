@@ -34,7 +34,7 @@
       border-bottom: 4px solid var(--poke-yellow);
       position: relative;
     }
-    header h1 { margin: 0; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.5px; }
+    header h1 { margin: 0; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; }
     
     .logout-btn {
       position: absolute; right: 12px; top: 14px;
@@ -54,12 +54,12 @@
       line-height: 1.4; letter-spacing: 0.5px;
     }
 
-    /* 分頁標籤 */
-    .tab-group { display: flex; gap: 6px; margin-bottom: 14px; }
+    /* 4 Tab Layout */
+    .tab-group { display: flex; gap: 4px; margin-bottom: 14px; }
     .tab-btn {
-      flex: 1; padding: 10px 4px; background: var(--card-bg);
-      border: 1px solid var(--border-color); border-radius: 10px;
-      font-size: 0.85rem; font-weight: bold; color: var(--text-sub);
+      flex: 1; padding: 10px 2px; background: var(--card-bg);
+      border: 1px solid var(--border-color); border-radius: 8px;
+      font-size: 0.82rem; font-weight: bold; color: var(--text-sub);
       cursor: pointer; text-align: center;
     }
     .tab-btn.active {
@@ -117,22 +117,37 @@
       cursor: pointer; box-shadow: 0 3px 8px rgba(229, 57, 53, 0.2);
     }
     .btn-main:disabled { background: #CFD8DC; box-shadow: none; }
-
-    .product-item {
-      background: #FAFAFA; border: 1px solid var(--border-color); padding: 10px;
-      border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+    .btn-cancel {
+      width: 100%; padding: 8px; background: #9E9E9E; color: white;
+      border: none; border-radius: 8px; font-size: 0.85rem; font-weight: bold;
+      cursor: pointer; margin-top: 6px; display: none;
     }
+
+    /* 明細卡片新版排版 */
+    .product-item {
+      background: #FAFAFA; border: 1px solid var(--border-color); padding: 12px;
+      border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .item-left { display: flex; flex-direction: column; gap: 4px; }
+    .item-row-1 { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .item-row-2 { font-size: 0.8rem; color: var(--text-sub); }
+
     .buyer-badge { background: #E3F2FD; color: var(--poke-blue); font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-    .payer-badge { background: #F3E5F5; color: var(--poke-purple); font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 2px; }
-    .type-badge { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; margin-left: 4px; font-weight: bold; }
+    .payer-badge { color: var(--poke-purple); font-weight: bold; }
+    .type-badge { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
     .badge-merch { background: #E1F5FE; color: #0288D1; }
     .badge-gachapon { background: #E8F5E9; color: #2E7D32; }
     .badge-ichiban { background: #FFF3E0; color: #EF6C00; }
 
-    .twd-price { color: var(--poke-red); font-weight: bold; font-size: 1rem; }
-    .profit-badge { font-size: 0.75rem; color: var(--poke-green); font-weight: bold; display: block; text-align: right; }
-    .btn-delete { background: #FFCDD2; color: #C62828; border: none; padding: 4px 6px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin-left: 6px; }
+    .item-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+    .twd-price { color: var(--poke-red); font-weight: bold; font-size: 1.05rem; }
+    .profit-badge { font-size: 0.75rem; color: var(--poke-green); font-weight: bold; }
+    
+    .action-btns { margin-top: 4px; display: flex; gap: 4px; }
+    .btn-edit { background: #E0E0E0; color: #424242; border: none; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; }
+    .btn-delete { background: #FFCDD2; color: #C62828; border: none; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; }
 
+    /* 對帳區 */
     .buyer-summary-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 14px; margin-bottom: 12px; }
     .buyer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--poke-yellow-light); padding-bottom: 6px; margin-bottom: 10px; }
     .buyer-name { font-size: 1rem; font-weight: bold; }
@@ -148,6 +163,7 @@
 
     .btn-copy { margin-top: 8px; width: 100%; background: var(--poke-yellow); color: #37474F; border: none; padding: 8px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
 
+    /* 統計區 */
     .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
     .stat-box { background: #FAFAFA; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; text-align: center; }
     .stat-box .title { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 4px; }
@@ -183,18 +199,19 @@
       <button class="logout-btn" onclick="handleLogout()">登出</button>
     </header>
 
+    <!-- 4 大分頁選單 -->
     <div class="tab-group">
       <button class="tab-btn active" onclick="switchTab('tab-entry')">📝 採購登記</button>
+      <button class="tab-btn" onclick="switchTab('tab-list')">📋 採購明細</button>
       <button class="tab-btn" onclick="switchTab('tab-summary')">📊 買家對帳</button>
-      <button class="tab-btn" onclick="switchTab('tab-profit')">📈 成本利潤</button>
+      <button class="tab-btn" onclick="switchTab('tab-profit')">📈 成本拆帳</button>
     </div>
 
     <!-- 分頁一：採購登記 -->
     <div id="tab-entry" class="tab-content active">
       <div class="card">
-        <h2>⚡ 新增代購商品</h2>
+        <h2 id="formCardTitle">⚡ 新增代購商品</h2>
         
-        <!-- 日期與代墊人 併排 -->
         <div class="form-row">
           <div class="form-group">
             <label>購買日期</label>
@@ -203,8 +220,8 @@
           <div class="form-group">
             <label>代墊人</label>
             <select id="payer">
-              <option value="修">修</option>
-              <option value="緯">緯</option>
+              <option value="一修">一修</option>
+              <option value="大緯">大緯</option>
             </select>
           </div>
         </div>
@@ -280,12 +297,15 @@
         </div>
 
         <button class="btn-main" id="submitBtn" onclick="submitProduct()">⚡ 確認儲存紀錄</button>
+        <button class="btn-cancel" id="cancelEditBtn" onclick="resetForm()">取消編輯</button>
       </div>
+    </div>
 
+    <!-- 分頁二：獨立採購明細頁面 -->
+    <div id="tab-list" class="tab-content">
       <div class="card">
         <h2>
           <span>📋 即時採購明細</span>
-          <!-- 日期篩選器 -->
           <select id="dateFilter" onchange="renderProductList()" style="width: 140px; font-size: 0.8rem; padding: 4px 6px;">
             <option value="all">📅 全部日期</option>
           </select>
@@ -294,7 +314,7 @@
       </div>
     </div>
 
-    <!-- 分頁二：買家對帳 -->
+    <!-- 分頁三：買家對帳 -->
     <div id="tab-summary" class="tab-content">
       <div class="card">
         <h2>📊 買家消費分類對帳</h2>
@@ -302,7 +322,7 @@
       </div>
     </div>
 
-    <!-- 分頁三：統計 -->
+    <!-- 分頁四：統計與拆帳 -->
     <div id="tab-profit" class="tab-content">
       <div class="card">
         <h2>📈 整體代購與拆帳統計</h2>
@@ -325,14 +345,14 @@
           </div>
         </div>
 
-        <!-- 拆帳專區 -->
+        <!-- 一修與大緯 拆帳專區 -->
         <div class="stat-grid" style="margin-top: 10px;">
           <div class="stat-box">
-            <div class="title">修 總代墊金額</div>
+            <div class="title">一修 總代墊金額</div>
             <div class="number" id="statPayerXiu" style="color: var(--poke-purple);">NT$ 0</div>
           </div>
           <div class="stat-box">
-            <div class="title">緯 總代墊金額</div>
+            <div class="title">大緯 總代墊金額</div>
             <div class="number" id="statPayerWei" style="color: var(--poke-purple);">NT$ 0</div>
           </div>
         </div>
@@ -350,7 +370,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } 
     from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getDatabase, ref, push, onValue, remove } 
+  import { getDatabase, ref, push, onValue, remove, update } 
     from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
@@ -370,6 +390,7 @@
   const productsRef = ref(db, 'products');
 
   let currentProducts = [];
+  let editingKey = null; // 當前編輯中的商品 Key
 
   const gachaponTable = {
     100: 40, 200: 70, 300: 100, 400: 130, 500: 160,
@@ -383,7 +404,6 @@
     ichiban: { name: '一番賞', badgeClass: 'badge-ichiban', catClass: 'cat-ichiban', icon: '🎟️' }
   };
 
-  // 初始化預設今日日期
   document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
 
   onAuthStateChanged(auth, (user) => {
@@ -416,8 +436,9 @@
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
     const btns = document.querySelectorAll('.tab-btn');
     if (tabId === 'tab-entry') btns[0].classList.add('active');
-    if (tabId === 'tab-summary') btns[1].classList.add('active');
-    if (tabId === 'tab-profit') btns[2].classList.add('active');
+    if (tabId === 'tab-list') btns[1].classList.add('active');
+    if (tabId === 'tab-summary') btns[2].classList.add('active');
+    if (tabId === 'tab-profit') btns[3].classList.add('active');
     document.getElementById(tabId).classList.add('active');
   };
 
@@ -479,6 +500,7 @@
     return { twd, costTwd, profitTwd, extraFee };
   };
 
+  // 新增或更新紀錄
   window.submitProduct = async function() {
     const purchaseDate = document.getElementById('purchaseDate').value;
     const payer = document.getElementById('payer').value;
@@ -487,6 +509,8 @@
     const priceJpy = Number(document.getElementById('priceJpy').value) || 0;
     const type = document.getElementById('type').value;
     const payMethod = document.getElementById('payMethod').value;
+    const cardTwdInput = document.getElementById('cardTwdInput').value;
+    const customTwd = document.getElementById('customTwd').value;
     const { twd, costTwd, profitTwd, extraFee } = window.calcPrice();
 
     if (!buyer || !title) {
@@ -496,28 +520,75 @@
 
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
-    btn.innerText = '儲存中...';
+
+    const payload = {
+      purchaseDate, payer, buyer, title, type, priceJpy, payMethod, extraFee,
+      cardTwdInput, customTwd,
+      priceTwd: twd, costTwd: costTwd, profitTwd: profitTwd,
+      updatedAt: Date.now()
+    };
 
     try {
-      await push(productsRef, {
-        purchaseDate, payer, buyer, title, type, priceJpy, payMethod, extraFee,
-        priceTwd: twd, costTwd: costTwd, profitTwd: profitTwd,
-        createdAt: Date.now()
-      });
-
-      document.getElementById('title').value = '';
-      document.getElementById('priceJpy').value = '';
-      document.getElementById('customTwd').value = '';
-      document.getElementById('extraFee').value = '';
-      document.getElementById('cardTwdInput').value = '';
-      window.calcPrice();
+      if (editingKey) {
+        // 更新模式
+        await update(ref(db, `products/${editingKey}`), payload);
+        alert('修改成功！');
+      } else {
+        // 新增模式
+        payload.createdAt = Date.now();
+        await push(productsRef, payload);
+      }
+      resetForm();
     } catch (e) {
       console.error(e);
       alert('儲存失敗！');
     } finally {
       btn.disabled = false;
-      btn.innerText = '⚡ 確認儲存紀錄';
     }
+  };
+
+  // 進入編輯狀態
+  window.editProduct = function(key) {
+    const item = currentProducts.find(p => p.key === key);
+    if (!item) return;
+
+    editingKey = key;
+    document.getElementById('formCardTitle').innerText = '✏️ 修改代購商品';
+    document.getElementById('submitBtn').innerText = '💾 更新採購紀錄';
+    document.getElementById('cancelEditBtn').style.display = 'block';
+
+    document.getElementById('purchaseDate').value = item.purchaseDate || '';
+    document.getElementById('payer').value = item.payer || '一修';
+    document.getElementById('buyer').value = item.buyer || '';
+    document.getElementById('title').value = item.title || '';
+    document.getElementById('type').value = item.type || 'merch';
+    document.getElementById('priceJpy').value = item.priceJpy || '';
+    document.getElementById('customTwd').value = item.customTwd || '';
+    document.getElementById('extraFee').value = item.extraFee || '';
+    document.getElementById('payMethod').value = item.payMethod || 'card';
+    document.getElementById('cardTwdInput').value = item.cardTwdInput || '';
+
+    onTypeChange();
+    onPayMethodChange();
+    calcPrice();
+
+    // 自動切換到採購登記頁面
+    switchTab('tab-entry');
+  };
+
+  // 重置表單
+  window.resetForm = function() {
+    editingKey = null;
+    document.getElementById('formCardTitle').innerText = '⚡ 新增代購商品';
+    document.getElementById('submitBtn').innerText = '⚡ 確認儲存紀錄';
+    document.getElementById('cancelEditBtn').style.display = 'none';
+
+    document.getElementById('title').value = '';
+    document.getElementById('priceJpy').value = '';
+    document.getElementById('customTwd').value = '';
+    document.getElementById('extraFee').value = '';
+    document.getElementById('cardTwdInput').value = '';
+    window.calcPrice();
   };
 
   window.deleteProduct = function(key) {
@@ -531,7 +602,7 @@
     navigator.clipboard.writeText(text).then(() => alert(`已複製 ${buyerName} 的分類帳單！`));
   };
 
-  // 獨立出的渲染列表函式（支援日期篩選）
+  // 渲染獨立明細頁面（套用最新要求的排版）
   window.renderProductList = function() {
     const productList = document.getElementById('productList');
     const filterDate = document.getElementById('dateFilter').value;
@@ -549,26 +620,31 @@
     let entryHtml = '';
     filtered.forEach(item => {
       const tInfo = typeMap[item.type] || typeMap.merch;
-      const payText = item.payMethod === 'card' ? '💳 刷卡' : '💴 現金';
-      const extraText = item.extraFee ? ` (+運費$${item.extraFee})` : '';
+      const payText = item.payMethod === 'card' ? '刷卡' : '付現';
       const itemPayer = item.payer || '未知';
-      const itemDate = item.purchaseDate || '';
 
       entryHtml += `
         <div class="product-item">
-          <div>
-            <span class="buyer-badge">${item.buyer}</span>
-            <span class="payer-badge">墊:${itemPayer}</span>
-            <strong style="margin-left: 2px;">${item.title}</strong>
-            <span class="type-badge ${tInfo.badgeClass}">${tInfo.icon} ${tInfo.name}</span>
-            <div style="color: #78909C; font-size: 0.78rem; margin-top:2px;">
-              ${itemDate} | ${item.priceJpy ? '¥'+item.priceJpy : ''}${extraText} (${payText} 成本 NT$${item.costTwd})
+          <div class="item-left">
+            <!-- 排版第一排：購買人 | 標籤 | 商品名稱 -->
+            <div class="item-row-1">
+              <span class="buyer-badge">${item.buyer}</span>
+              <span class="type-badge ${tInfo.badgeClass}">${tInfo.icon} ${tInfo.name}</span>
+              <strong>${item.title}</strong>
+            </div>
+            <!-- 排版第二排：日幣價格(刷卡/付現) | 代墊人 -->
+            <div class="item-row-2">
+              ¥ ${item.priceJpy || 0} (${payText}) | <span class="payer-badge">墊: ${itemPayer}</span>
             </div>
           </div>
-          <div style="text-align: right;">
+          <!-- 右側售價、利潤與操作按鈕 -->
+          <div class="item-right">
             <div class="twd-price">NT$ ${item.priceTwd}</div>
             <span class="profit-badge">賺 NT$${item.profitTwd}</span>
-            <button class="btn-delete" onclick="deleteProduct('${item.key}')">刪除</button>
+            <div class="action-btns">
+              <button class="btn-edit" onclick="editProduct('${item.key}')">✏️ 修改</button>
+              <button class="btn-delete" onclick="deleteProduct('${item.key}')">🗑️</button>
+            </div>
           </div>
         </div>
       `;
@@ -593,7 +669,6 @@
 
       currentProducts = Object.keys(data).map(key => ({ key, ...data[key] })).reverse();
 
-      // 動態更新日期篩選選單
       const dates = new Set();
       const buyerSet = new Set();
 
@@ -602,7 +677,6 @@
         if (item.purchaseDate) dates.add(item.purchaseDate);
       });
 
-      // 保存當前選中的日期
       const currentSelectedDate = dateFilterSelect.value;
       let dateOptions = '<option value="all">📅 全部日期</option>';
       Array.from(dates).sort().reverse().forEach(d => {
@@ -613,17 +687,15 @@
         dateFilterSelect.value = currentSelectedDate;
       }
 
-      // 1. 渲染產品清單
       renderProductList();
 
-      // 2. 買家快捷標籤
       let tagsHtml = '';
       buyerSet.forEach(name => {
         tagsHtml += `<button class="tag-btn" type="button" onclick="setBuyer('${name}')">+ ${name}</button>`;
       });
       quickBuyerTags.innerHTML = tagsHtml;
 
-      // 3. 分類對帳
+      // 分類對帳
       const buyerMap = {};
       currentProducts.forEach(item => {
         if (!buyerMap[item.buyer]) {
@@ -694,6 +766,7 @@
     });
   }
 
+  // 拆帳統計算計
   function updateStatics(items) {
     let totalRevenue = 0;
     let totalCost = 0;
@@ -705,8 +778,8 @@
       totalRevenue += it.priceTwd || 0;
       totalCost += cost;
 
-      if (it.payer === '修') costXiu += cost;
-      if (it.payer === '緯') costWei += cost;
+      if (it.payer === '一修') costXiu += cost;
+      if (it.payer === '大緯') costWei += cost;
     });
 
     const totalProfit = totalRevenue - totalCost;
