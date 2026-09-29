@@ -10,7 +10,963 @@
   <link rel="icon" type="image/jpeg" href="logo.jpg">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-a<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>微物所 weii select｜日本連線代購</title>
+
+  <!-- iOS 主畫面圖示最佳化設定 -->
+  <link rel="apple-touch-icon" id="appleIcon" href="logo.jpg">
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="微物所">
+
+  <!-- 自動修復 iOS Safari JPG 圖示無效問題 -->
+  <script>
+    (function() {
+      var img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        var pngData = canvas.toDataURL('image/png');
+        
+        var link = document.getElementById('appleIcon');
+        if (link) {
+          link.href = pngData;
+          link.type = 'image/png';
+        }
+      };
+      img.src = 'logo.jpg';
+    })();
+  </script>
+
+  <style>
+    :root {
+      --poke-red: #E53935;
+      --poke-yellow: #FFC107;
+      --poke-yellow-light: #FFF8E1;
+      --poke-blue: #1976D2;
+      --bg-color: #F8F9FA;
+      --card-bg: #FFFFFF;
+      --text-main: #2C3E50;
+      --text-sub: #7F8C8D;
+      --border-color: #ECEFF1;
+
+      --soft-blue: #E3F2FD;
+      --soft-green: #2E7D32;
+    }
+
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg-color); margin: 0; padding: 12px; color: var(--text-main); }
+    .container { max-width: 480px; margin: 0 auto; }
+
+    header {
+      background: linear-gradient(135deg, var(--poke-red), #EF5350);
+      color: white;
+      padding: 16px 12px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(229, 57, 53, 0.15);
+      margin-bottom: 14px;
+      border-bottom: 4px solid var(--poke-yellow);
+      position: relative;
+    }
+    header h1 { margin: 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.5px; padding-right: 40px; }
+    
+    .logout-btn {
+      position: absolute; right: 10px; top: 12px;
+      background: rgba(255,255,255,0.25); color: white; border: 1px solid white;
+      padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;
+    }
+
+    /* 登入畫面樣式 */
+    .login-card {
+      background: var(--card-bg); border-radius: 16px; padding: 24px;
+      margin-top: 40px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--border-color); border-top: 5px solid var(--poke-red);
+    }
+    .login-card h2 {
+      text-align: center; margin-top: 0; margin-bottom: 20px;
+      color: var(--poke-red); font-size: 1.15rem; font-weight: 700;
+      line-height: 1.4; letter-spacing: 0.5px;
+    }
+
+    /* 4 Tab Layout */
+    .tab-group { display: flex; gap: 4px; margin-bottom: 14px; }
+    .tab-btn {
+      flex: 1; padding: 10px 2px; background: var(--card-bg);
+      border: 1px solid var(--border-color); border-radius: 8px;
+      font-size: 0.82rem; font-weight: bold; color: var(--text-sub);
+      cursor: pointer; text-align: center;
+    }
+    .tab-btn.active {
+      background: var(--poke-red); color: white; border-color: var(--poke-red);
+      box-shadow: 0 2px 6px rgba(229, 57, 53, 0.2);
+    }
+
+    /* 卡片樣式 */
+    .card {
+      background: var(--card-bg); border-radius: 16px; padding: 16px;
+      margin-bottom: 14px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+      border: 1px solid var(--border-color);
+    }
+    .card h2 { font-size: 1.05rem; margin-top: 0; margin-bottom: 12px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center; }
+
+    /* 表單元件 */
+    .form-group { margin-bottom: 10px; display: flex; flex-direction: column; min-width: 0; }
+    .form-group label { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 4px; font-weight: bold; }
+    .form-group input, .form-group select {
+      padding: 10px; border: 1.5px solid var(--border-color);
+      border-radius: 8px; font-size: 0.9rem; outline: none; background-color: #FAFAFA;
+      width: 100%; -webkit-appearance: none;
+    }
+    .form-group input[type="date"] {
+      padding: 8px 10px;
+      min-height: 42px;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--poke-blue); background-color: #FFFFFF;
+    }
+    
+    .date-row { display: grid; grid-template-columns: 1.8fr 1fr; gap: 8px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    /* 快捷標籤 */
+    .quick-buyer-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .tag-btn {
+      background: var(--poke-yellow-light); color: #B78103;
+      border: 1px solid #FFE082; border-radius: 8px; padding: 3px 8px;
+      font-size: 0.78rem; font-weight: bold; cursor: pointer;
+    }
+
+    .cost-setting-box {
+      background: #F0F4F8; padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #D9E2EC;
+    }
+
+    .price-box {
+      background: var(--poke-yellow-light); border: 1.5px dashed #FFD54F;
+      padding: 10px; border-radius: 10px; margin-bottom: 12px;
+    }
+    .price-main { text-align: center; color: #C62828; font-size: 1.1rem; margin-bottom: 6px; }
+    .profit-detail {
+      display: flex; justify-content: space-around; font-size: 0.82rem;
+      border-top: 1px dashed #FFE082; padding-top: 6px; color: #555;
+    }
+    .profit-detail span strong { color: var(--soft-green); }
+
+    .btn-main {
+      width: 100%; padding: 12px; background: var(--poke-red); color: white;
+      border: none; border-radius: 10px; font-size: 0.95rem; font-weight: bold;
+      cursor: pointer; box-shadow: 0 3px 8px rgba(229, 57, 53, 0.2);
+    }
+    .btn-main:disabled { background: #CFD8DC; box-shadow: none; }
+
+    /* 精簡明細卡片 */
+    .product-item {
+      background: #FAFAFA; border: 1px solid var(--border-color); padding: 10px 12px;
+      border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .item-left { display: flex; flex-direction: column; gap: 3px; max-width: 68%; }
+    
+    .item-row-1 { display: flex; align-items: center; gap: 6px; }
+    .buyer-badge { background: var(--soft-blue); color: var(--poke-blue); font-size: 0.75rem; padding: 1px 6px; border-radius: 4px; font-weight: bold; flex-shrink: 0; }
+    .item-title { font-size: 0.92rem; font-weight: bold; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .item-row-2 { font-size: 0.78rem; color: var(--text-sub); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .item-row-2 span { color: #B0BEC5; }
+
+    .item-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+    .twd-price { color: var(--poke-red); font-weight: bold; font-size: 1rem; }
+    .profit-badge { font-size: 0.72rem; color: var(--soft-green); font-weight: bold; }
+    
+    .action-btns { margin-top: 2px; display: flex; gap: 4px; }
+    .btn-edit { background: #ECEFF1; color: #546E7A; border: none; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
+    .btn-delete { background: #FFEBEE; color: #C62828; border: none; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
+
+    /* 對帳區 */
+    .buyer-summary-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 14px; margin-bottom: 12px; }
+    .buyer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--poke-yellow-light); padding-bottom: 6px; margin-bottom: 10px; }
+    .buyer-name { font-size: 1rem; font-weight: bold; }
+    .buyer-total { font-size: 1.1rem; font-weight: bold; color: var(--poke-red); }
+
+    .category-block { background: #FAFAFA; border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; border-left: 3px solid #B0BEC5; }
+    .category-block.cat-merch { border-left-color: #90CAF9; }
+    .category-block.cat-gachapon { border-left-color: #A5D6A7; }
+    .category-block.cat-ichiban { border-left-color: #FFCC80; }
+
+    .category-title { font-size: 0.8rem; font-weight: bold; color: var(--text-sub); margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .category-item { font-size: 0.85rem; display: flex; justify-content: space-between; margin-bottom: 2px; }
+
+    .btn-copy { margin-top: 8px; width: 100%; background: var(--poke-yellow); color: #37474F; border: none; padding: 8px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
+
+    /* 統計區 */
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .stat-box { background: #FAFAFA; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; text-align: center; }
+    .stat-box .title { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 4px; }
+    .stat-box .number { font-size: 1.15rem; font-weight: bold; }
+    .stat-box.highlight { background: #E8F5E9; border-color: #A5D6A7; }
+    .stat-box.highlight .number { color: var(--soft-green); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Modal 彈出視窗樣式 */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; padding: 12px;
+    }
+    .modal-container {
+      background: var(--card-bg);
+      border-radius: 16px;
+      width: 100%; max-width: 460px;
+      max-height: 90vh; overflow-y: auto;
+      padding: 18px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px; margin-bottom: 12px;
+    }
+    .modal-header h3 { margin: 0; font-size: 1.1rem; color: var(--poke-red); }
+    .close-modal-btn {
+      background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-sub);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 品牌登入卡片 -->
+  <div id="loginView" class="login-card">
+    <h2>✨ 微物所 weii select｜日本連線代購</h2>
+    <div class="form-group">
+      <label>管理員帳號 (Email)</label>
+      <input type="email" id="loginEmail" placeholder="admin@example.com">
+    </div>
+    <div class="form-group">
+      <label>密碼</label>
+      <input type="password" id="loginPassword" placeholder="••••••••">
+    </div>
+    <button class="btn-main" onclick="handleLogin()" style="margin-top: 10px;">🔑 登入管理後台</button>
+  </div>
+
+  <!-- 主控制台 -->
+  <div id="appView" style="display: none;">
+    <header>
+      <h1>✨ 微物所 weii select｜日本連線代購</h1>
+      <button class="logout-btn" onclick="handleLogout()">登出</button>
+    </header>
+
+    <!-- 4 大分頁選單 -->
+    <div class="tab-group">
+      <button class="tab-btn active" onclick="switchTab('tab-entry')">📝 採購登記</button>
+      <button class="tab-btn" onclick="switchTab('tab-list')">📋 採購明細</button>
+      <button class="tab-btn" onclick="switchTab('tab-summary')">📊 買家對帳</button>
+      <button class="tab-btn" onclick="switchTab('tab-profit')">📈 成本拆帳</button>
+    </div>
+
+    <!-- 分頁一：採購登記 -->
+    <div id="tab-entry" class="tab-content active">
+      <div class="card">
+        <h2>⚡ 新增代購商品</h2>
+        
+        <div class="date-row">
+          <div class="form-group">
+            <label>購買日期</label>
+            <input type="date" id="purchaseDate">
+          </div>
+          <div class="form-group">
+            <label>代墊人</label>
+            <select id="payer">
+              <option value="一修">一修</option>
+              <option value="大緯">大緯</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>購買人姓名 / 帳號</label>
+          <input type="text" id="buyer" placeholder="例如：小明 / 彥蓉">
+          <div class="quick-buyer-tags" id="quickBuyerTags"></div>
+        </div>
+
+        <div class="form-group">
+          <label>商品名稱</label>
+          <input type="text" id="title" placeholder="例如：吉伊卡哇娃娃">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>計價模式</label>
+            <select id="type" onchange="onTypeChange('')">
+              <option value="merch">🛍️ 商品 (0.27)</option>
+              <option value="custom">🌸 商品 (自訂價)</option>
+              <option value="gachapon">🎰 扭蛋 (固定對照表)</option>
+              <option value="ichiban">🎟️ 一番賞 (0.27)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>日幣標價 (¥)</label>
+            <input type="number" id="priceJpy" placeholder="500" oninput="calcPrice('')">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" id="customPriceGroup" style="display: none;">
+            <label>自訂台幣售價 (NT$)</label>
+            <input type="number" id="customTwd" placeholder="例如：250" oninput="calcPrice('')">
+          </div>
+
+          <div class="form-group">
+            <label>體積/重物加價 (NT$)</label>
+            <input type="number" id="extraFee" placeholder="例如：50 (無可不填)" oninput="calcPrice('')">
+          </div>
+        </div>
+
+        <div class="cost-setting-box">
+          <div class="form-group">
+            <label>付款方式</label>
+            <select id="payMethod" onchange="onPayMethodChange('')">
+              <option value="card">💳 海外刷卡 (台幣+1.5%手續費)</option>
+              <option value="cash">💴 現金 / 扭蛋 (匯率 0.2)</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="cardInputBlock" style="margin-bottom:0;">
+            <label>刷卡台幣 (未含1.5%手續費)</label>
+            <input type="number" id="cardTwdInput" placeholder="例如：300" oninput="calcPrice('')">
+          </div>
+
+          <div class="form-group" id="cashInputBlock" style="display:none; margin-bottom:0;">
+            <label>現金換匯匯率</label>
+            <input type="number" id="cashRateInput" value="0.2" readonly style="background:#E0E0E0; color:#555;">
+          </div>
+        </div>
+
+        <div class="price-box">
+          <div class="price-main">
+            台幣售價：<strong id="priceTwd">NT$ 0</strong>
+          </div>
+          <div class="profit-detail">
+            <span>採購成本: <span id="costTwd">NT$ 0</span></span>
+            <span>預估淨利: <strong id="profitTwd">NT$ 0</strong></span>
+          </div>
+        </div>
+
+        <button class="btn-main" id="submitBtn" onclick="submitProduct()">⚡ 確認儲存紀錄</button>
+      </div>
+    </div>
+
+    <!-- 分頁二：採購明細 -->
+    <div id="tab-list" class="tab-content">
+      <div class="card">
+        <h2>
+          <span>📋 即時採購明細</span>
+          <select id="dateFilter" onchange="renderProductList()" style="width: 140px; font-size: 0.8rem; padding: 4px 6px;">
+            <option value="all">📅 全部日期</option>
+          </select>
+        </h2>
+        <div id="productList">載入中...</div>
+      </div>
+    </div>
+
+    <!-- 分頁三：買家對帳 -->
+    <div id="tab-summary" class="tab-content">
+      <div class="card">
+        <h2>📊 買家消費分類對帳</h2>
+        <div id="buyerSummaryList">載入中...</div>
+      </div>
+    </div>
+
+    <!-- 分頁四：統計與拆帳 -->
+    <div id="tab-profit" class="tab-content">
+      <div class="card">
+        <h2>📈 整體代購與拆帳統計</h2>
+        <div class="stat-grid">
+          <div class="stat-box">
+            <div class="title">總採購筆數</div>
+            <div class="number" id="statTotalCount">0 筆</div>
+          </div>
+          <div class="stat-box">
+            <div class="title">總代購營業額</div>
+            <div class="number" id="statTotalRevenue" style="color: var(--poke-red);">NT$ 0</div>
+          </div>
+          <div class="stat-box">
+            <div class="title">總採購成本</div>
+            <div class="number" id="statTotalCost" style="color: var(--poke-blue);">NT$ 0</div>
+          </div>
+          <div class="stat-box highlight">
+            <div class="title">淨利潤 (獲利)</div>
+            <div class="number" id="statTotalProfit">NT$ 0</div>
+          </div>
+        </div>
+
+        <div class="stat-grid" style="margin-top: 10px;">
+          <div class="stat-box">
+            <div class="title">一修 總代墊金額</div>
+            <div class="number" id="statPayerXiu" style="color: #6A1B9A;">NT$ 0</div>
+          </div>
+          <div class="stat-box">
+            <div class="title">大緯 總代墊金額</div>
+            <div class="number" id="statPayerWei" style="color: #6A1B9A;">NT$ 0</div>
+          </div>
+        </div>
+
+        <div class="stat-box" style="margin-top: 10px;">
+          <div class="title">平均毛利率</div>
+          <div class="number" id="statMargin">0 %</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 修改彈出視窗 (Modal) -->
+<div id="editModal" class="modal-overlay" style="display: none;">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3>✏️ 修改代購資料</h3>
+      <button class="close-modal-btn" onclick="closeEditModal()">✕</button>
+    </div>
+
+    <div class="date-row">
+      <div class="form-group">
+        <label>購買日期</label>
+        <input type="date" id="m_purchaseDate">
+      </div>
+      <div class="form-group">
+        <label>代墊人</label>
+        <select id="m_payer">
+          <option value="一修">一修</option>
+          <option value="大緯">大緯</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>購買人姓名 / 帳號</label>
+      <input type="text" id="m_buyer">
+    </div>
+
+    <div class="form-group">
+      <label>商品名稱</label>
+      <input type="text" id="m_title">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>計價模式</label>
+        <select id="m_type" onchange="onTypeChange('m_')">
+          <option value="merch">🛍️ 商品 (0.27)</option>
+          <option value="custom">🌸 商品 (自訂價)</option>
+          <option value="gachapon">🎰 扭蛋 (固定對照表)</option>
+          <option value="ichiban">🎟️ 一番賞 (0.27)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>日幣標價 (¥)</label>
+        <input type="number" id="m_priceJpy" oninput="calcPrice('m_')">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group" id="m_customPriceGroup" style="display: none;">
+        <label>自訂台幣售價 (NT$)</label>
+        <input type="number" id="m_customTwd" oninput="calcPrice('m_')">
+      </div>
+
+      <div class="form-group">
+        <label>體積/重物加價 (NT$)</label>
+        <input type="number" id="m_extraFee" oninput="calcPrice('m_')">
+      </div>
+    </div>
+
+    <div class="cost-setting-box">
+      <div class="form-group">
+        <label>付款方式</label>
+        <select id="m_payMethod" onchange="onPayMethodChange('m_')">
+          <option value="card">💳 海外刷卡 (台幣+1.5%手續費)</option>
+          <option value="cash">💴 現金 / 扭蛋 (汇率 0.2)</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="m_cardInputBlock" style="margin-bottom:0;">
+        <label>刷卡台幣 (未含1.5%手續費)</label>
+        <input type="number" id="m_cardTwdInput" oninput="calcPrice('m_')">
+      </div>
+
+      <div class="form-group" id="m_cashInputBlock" style="display:none; margin-bottom:0;">
+        <label>現金換匯匯率</label>
+        <input type="number" id="m_cashRateInput" value="0.2" readonly style="background:#E0E0E0; color:#555;">
+      </div>
+    </div>
+
+    <div class="price-box">
+      <div class="price-main">
+        台幣售價：<strong id="m_priceTwd">NT$ 0</strong>
+      </div>
+      <div class="profit-detail">
+        <span>採購成本: <span id="m_costTwd">NT$ 0</span></span>
+        <span>預估淨利: <strong id="m_profitTwd">NT$ 0</strong></span>
+      </div>
+    </div>
+
+    <button class="btn-main" onclick="saveModalEdit()">💾 更新資料</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } 
+    from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getDatabase, ref, push, onValue, remove, update } 
+    from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBgm9M8aCSJH8iOf1_X-ZKSX4k9iiSyX1U",
+    authDomain: "weiiselect.firebaseapp.com",
+    databaseURL: "https://weiiselect-default-rtdb.firebaseio.com",
+    projectId: "weiiselect",
+    storageBucket: "weiiselect.firebasestorage.app",
+    messagingSenderId: "379762570674",
+    appId: "1:379762570674:web:2d45f355e153381ff060ab",
+    measurementId: "G-MTYYGM67Y9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+  const productsRef = ref(db, 'products');
+
+  let currentProducts = [];
+  let editingKey = null;
+
+  const gachaponTable = {
+    100: 40, 200: 70, 300: 100, 400: 130, 500: 160,
+    600: 200, 700: 220, 800: 250, 1000: 300, 2000: 580
+  };
+
+  const typeMap = {
+    merch: { name: '商品', icon: '🛍️' },
+    custom: { name: '商品', icon: '🌸' },
+    gachapon: { name: '扭蛋', icon: '🎰' },
+    ichiban: { name: '一番賞', icon: '🎟️' }
+  };
+
+  document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      document.getElementById('loginView').style.display = 'none';
+      document.getElementById('appView').style.display = 'block';
+      loadDatabaseData();
+    } else {
+      document.getElementById('loginView').style.display = 'block';
+      document.getElementById('appView').style.display = 'none';
+    }
+  });
+
+  window.handleLogin = async function() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPassword').value;
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (e) {
+      alert('登入失敗，請確認帳號密碼！');
+    }
+  };
+
+  window.handleLogout = function() {
+    if (confirm('確定要登出嗎？')) signOut(auth);
+  };
+
+  window.switchTab = function(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    const btns = document.querySelectorAll('.tab-btn');
+    if (tabId === 'tab-entry') btns[0].classList.add('active');
+    if (tabId === 'tab-list') btns[1].classList.add('active');
+    if (tabId === 'tab-summary') btns[2].classList.add('active');
+    if (tabId === 'tab-profit') btns[3].classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  };
+
+  window.setBuyer = function(name) { document.getElementById('buyer').value = name; };
+
+  window.onTypeChange = function(prefix = '') {
+    const type = document.getElementById(prefix + 'type').value;
+    document.getElementById(prefix + 'customPriceGroup').style.display = (type === 'custom') ? 'block' : 'none';
+
+    if (type === 'gachapon') {
+      document.getElementById(prefix + 'payMethod').value = 'cash';
+      onPayMethodChange(prefix);
+    }
+    calcPrice(prefix);
+  };
+
+  window.onPayMethodChange = function(prefix = '') {
+    const method = document.getElementById(prefix + 'payMethod').value;
+    document.getElementById(prefix + 'cardInputBlock').style.display = (method === 'card') ? 'block' : 'none';
+    document.getElementById(prefix + 'cashInputBlock').style.display = (method === 'cash') ? 'block' : 'none';
+    calcPrice(prefix);
+  };
+
+  window.calcPrice = function(prefix = '') {
+    const type = document.getElementById(prefix + 'type').value;
+    const jpy = Number(document.getElementById(prefix + 'priceJpy').value) || 0;
+    const extraFee = Number(document.getElementById(prefix + 'extraFee').value) || 0;
+    const payMethod = document.getElementById(prefix + 'payMethod').value;
+
+    let baseTwd = 0;
+    if (type === 'gachapon') {
+      baseTwd = gachaponTable[jpy] || Math.ceil(jpy * 0.27);
+    } else if (type === 'custom') {
+      baseTwd = Number(document.getElementById(prefix + 'customTwd').value) || 0;
+    } else {
+      baseTwd = Math.ceil(jpy * 0.27);
+    }
+
+    const twd = baseTwd + extraFee;
+
+    let costTwd = 0;
+    if (payMethod === 'card') {
+      const cardInput = document.getElementById(prefix + 'cardTwdInput');
+      if (!cardInput.value && jpy > 0) {
+        cardInput.placeholder = Math.round(jpy * 0.2);
+      }
+      const rawCardTwd = Number(cardInput.value) || Math.round(jpy * 0.2);
+      costTwd = Math.ceil(rawCardTwd * 1.015);
+    } else {
+      costTwd = Math.ceil(jpy * 0.2);
+    }
+
+    const profitTwd = twd - costTwd;
+
+    document.getElementById(prefix + 'priceTwd').innerText = `NT$ ${twd}`;
+    document.getElementById(prefix + 'costTwd').innerText = `NT$ ${costTwd}`;
+    document.getElementById(prefix + 'profitTwd').innerText = `NT$ ${profitTwd}`;
+
+    return { twd, costTwd, profitTwd, extraFee };
+  };
+
+  window.submitProduct = async function() {
+    const purchaseDate = document.getElementById('purchaseDate').value;
+    const payer = document.getElementById('payer').value;
+    const buyer = document.getElementById('buyer').value.trim();
+    const title = document.getElementById('title').value.trim();
+    const priceJpy = Number(document.getElementById('priceJpy').value) || 0;
+    const type = document.getElementById('type').value;
+    const payMethod = document.getElementById('payMethod').value;
+    const cardTwdInput = document.getElementById('cardTwdInput').value;
+    const customTwd = document.getElementById('customTwd').value;
+    const { twd, costTwd, profitTwd, extraFee } = window.calcPrice('');
+
+    if (!buyer || !title) {
+      alert('請填寫「購買人」與「商品名稱」！');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+
+    try {
+      await push(productsRef, {
+        purchaseDate, payer, buyer, title, type, priceJpy, payMethod, extraFee,
+        cardTwdInput, customTwd,
+        priceTwd: twd, costTwd: costTwd, profitTwd: profitTwd,
+        createdAt: Date.now()
+      });
+
+      document.getElementById('title').value = '';
+      document.getElementById('priceJpy').value = '';
+      document.getElementById('customTwd').value = '';
+      document.getElementById('extraFee').value = '';
+      document.getElementById('cardTwdInput').value = '';
+      window.calcPrice('');
+      alert('紀錄新增成功！');
+    } catch (e) {
+      console.error(e);
+      alert('儲存失敗！');
+    } finally {
+      btn.disabled = false;
+    }
+  };
+
+  window.editProductModal = function(key) {
+    const item = currentProducts.find(p => p.key === key);
+    if (!item) return;
+
+    editingKey = key;
+
+    document.getElementById('m_purchaseDate').value = item.purchaseDate || '';
+    document.getElementById('m_payer').value = item.payer || '一修';
+    document.getElementById('m_buyer').value = item.buyer || '';
+    document.getElementById('m_title').value = item.title || '';
+    document.getElementById('m_type').value = item.type || 'merch';
+    document.getElementById('m_priceJpy').value = item.priceJpy || '';
+    document.getElementById('m_customTwd').value = item.customTwd || '';
+    document.getElementById('m_extraFee').value = item.extraFee || '';
+    document.getElementById('m_payMethod').value = item.payMethod || 'card';
+    document.getElementById('m_cardTwdInput').value = item.cardTwdInput || '';
+
+    onTypeChange('m_');
+    onPayMethodChange('m_');
+    calcPrice('m_');
+
+    document.getElementById('editModal').style.display = 'flex';
+  };
+
+  window.closeEditModal = function() {
+    editingKey = null;
+    document.getElementById('editModal').style.display = 'none';
+  };
+
+  window.saveModalEdit = async function() {
+    if (!editingKey) return;
+
+    const purchaseDate = document.getElementById('m_purchaseDate').value;
+    const payer = document.getElementById('m_payer').value;
+    const buyer = document.getElementById('m_buyer').value.trim();
+    const title = document.getElementById('m_title').value.trim();
+    const priceJpy = Number(document.getElementById('m_priceJpy').value) || 0;
+    const type = document.getElementById('m_type').value;
+    const payMethod = document.getElementById('m_payMethod').value;
+    const cardTwdInput = document.getElementById('m_cardTwdInput').value;
+    const customTwd = document.getElementById('m_customTwd').value;
+    const { twd, costTwd, profitTwd, extraFee } = window.calcPrice('m_');
+
+    if (!buyer || !title) {
+      alert('請填寫「購買人」與「商品名稱」！');
+      return;
+    }
+
+    try {
+      await update(ref(db, `products/${editingKey}`), {
+        purchaseDate, payer, buyer, title, type, priceJpy, payMethod, extraFee,
+        cardTwdInput, customTwd,
+        priceTwd: twd, costTwd: costTwd, profitTwd: profitTwd,
+        updatedAt: Date.now()
+      });
+      alert('更新成功！');
+      closeEditModal();
+    } catch (e) {
+      console.error(e);
+      alert('更新失敗！');
+    }
+  };
+
+  window.deleteProduct = function(key) {
+    if (confirm('確定要刪除這筆紀錄嗎？')) {
+      remove(ref(db, `products/${key}`));
+    }
+  };
+
+  window.copyBuyerDetails = function(buyerName, total, copyText) {
+    const text = `【日本代購對帳單 - ${buyerName}】\n-------------------\n${copyText}-------------------\n合計台幣：NT$ ${total}`;
+    navigator.clipboard.writeText(text).then(() => alert(`已複製 ${buyerName} 的分類帳單！`));
+  };
+
+  window.renderProductList = function() {
+    const productList = document.getElementById('productList');
+    const filterDate = document.getElementById('dateFilter').value;
+
+    let filtered = currentProducts;
+    if (filterDate !== 'all') {
+      filtered = currentProducts.filter(item => item.purchaseDate === filterDate);
+    }
+
+    if (filtered.length === 0) {
+      productList.innerHTML = '<p style="color:#888; text-align:center;">此日期無採購紀錄</p>';
+      return;
+    }
+
+    let entryHtml = '';
+    filtered.forEach(item => {
+      const tInfo = typeMap[item.type] || typeMap.merch;
+      const payText = item.payMethod === 'card' ? '刷卡' : '付現';
+      const itemPayer = item.payer || '未知';
+
+      entryHtml += `
+        <div class="product-item">
+          <div class="item-left">
+            <div class="item-row-1">
+              <span class="buyer-badge">${item.buyer}</span>
+              <span class="item-title">${item.title}</span>
+            </div>
+            <div class="item-row-2">
+              ${tInfo.icon} ${tInfo.name} <span>‧</span> ¥${item.priceJpy || 0} (${payText} NT$${item.costTwd}) <span>‧</span> ${itemPayer}
+            </div>
+          </div>
+          <div class="item-right">
+            <div class="twd-price">NT$ ${item.priceTwd}</div>
+            <span class="profit-badge">賺 NT$${item.profitTwd}</span>
+            <div class="action-btns">
+              <button class="btn-edit" onclick="editProductModal('${item.key}')">✏️ 修改</button>
+              <button class="btn-delete" onclick="deleteProduct('${item.key}')">🗑️</button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    productList.innerHTML = entryHtml;
+  };
+
+  function loadDatabaseData() {
+    onValue(productsRef, (snapshot) => {
+      const data = snapshot.val();
+      const buyerSummaryList = document.getElementById('buyerSummaryList');
+      const quickBuyerTags = document.getElementById('quickBuyerTags');
+      const dateFilterSelect = document.getElementById('dateFilter');
+
+      if (!data) {
+        document.getElementById('productList').innerHTML = '<p style="color:#888; text-align:center;">目前無採購紀錄</p>';
+        buyerSummaryList.innerHTML = '<p style="color:#888; text-align:center;">尚無買家資料</p>';
+        quickBuyerTags.innerHTML = '';
+        updateStatics([]);
+        return;
+      }
+
+      currentProducts = Object.keys(data).map(key => ({ key, ...data[key] })).reverse();
+
+      const dates = new Set();
+      const buyerSet = new Set();
+
+      currentProducts.forEach(item => {
+        buyerSet.add(item.buyer);
+        if (item.purchaseDate) dates.add(item.purchaseDate);
+      });
+
+      const currentSelectedDate = dateFilterSelect.value;
+      let dateOptions = '<option value="all">📅 全部日期</option>';
+      Array.from(dates).sort().reverse().forEach(d => {
+        dateOptions += `<option value="${d}">${d}</option>`;
+      });
+      dateFilterSelect.innerHTML = dateOptions;
+      if (Array.from(dates).includes(currentSelectedDate)) {
+        dateFilterSelect.value = currentSelectedDate;
+      }
+
+      renderProductList();
+
+      let tagsHtml = '';
+      buyerSet.forEach(name => {
+        tagsHtml += `<button class="tag-btn" type="button" onclick="setBuyer('${name}')">+ ${name}</button>`;
+      });
+      quickBuyerTags.innerHTML = tagsHtml;
+
+      // 分類對帳
+      const buyerMap = {};
+      currentProducts.forEach(item => {
+        if (!buyerMap[item.buyer]) {
+          buyerMap[item.buyer] = { total: 0, categories: { merch: [], gachapon: [], ichiban: [] } };
+        }
+        let catType = item.type || 'merch';
+        if (catType === 'custom') catType = 'merch';
+
+        buyerMap[item.buyer].categories[catType].push(item);
+        buyerMap[item.buyer].total += item.priceTwd;
+      });
+
+      let summaryHtml = '';
+      Object.keys(buyerMap).forEach(buyerName => {
+        const group = buyerMap[buyerName];
+        let blocksHtml = '';
+        let copyTextFull = '';
+
+        ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
+          const catItems = group.categories[catKey];
+          if (catItems.length > 0) {
+            const tInfo = typeMap[catKey];
+            let catTotal = 0;
+            let catItemsHtml = '';
+            let catCopyText = `【${tInfo.icon} ${tInfo.name}】\n`;
+
+            catItems.forEach(it => {
+              catTotal += it.priceTwd;
+              const extraDesc = it.extraFee ? ` (含加價$${it.extraFee})` : '';
+              catItemsHtml += `
+                <div class="category-item">
+                  <span>• ${it.title}${extraDesc}</span>
+                  <strong>NT$ ${it.priceTwd}</strong>
+                </div>
+              `;
+              catCopyText += `  • ${it.title}${extraDesc}：NT$ ${it.priceTwd}\n`;
+            });
+
+            blocksHtml += `
+              <div class="category-block ${tInfo.catClass}">
+                <div class="category-title">
+                  <span>${tInfo.icon} ${tInfo.name} (${catItems.length}件)</span>
+                  <span>小計 NT$ ${catTotal}</span>
+                </div>
+                ${catItemsHtml}
+              </div>
+            `;
+            copyTextFull += `${catCopyText}  小計：NT$ ${catTotal}\n\n`;
+          }
+        });
+
+        summaryHtml += `
+          <div class="buyer-summary-card">
+            <div class="buyer-header">
+              <span class="buyer-name">👤 ${buyerName}</span>
+              <span class="buyer-total">總計 NT$ ${group.total}</span>
+            </div>
+            ${blocksHtml}
+            <button class="btn-copy" onclick="copyBuyerDetails('${buyerName}', ${group.total}, \`${copyTextFull}\`)">
+              📋 複製 ${buyerName} 的帳單
+            </button>
+          </div>
+        `;
+      });
+      buyerSummaryList.innerHTML = summaryHtml;
+
+      updateStatics(currentProducts);
+    });
+  }
+
+  function updateStatics(items) {
+    let totalRevenue = 0;
+    let totalCost = 0;
+    let costXiu = 0;
+    let costWei = 0;
+
+    items.forEach(it => {
+      const cost = it.costTwd || 0;
+      totalRevenue += it.priceTwd || 0;
+      totalCost += cost;
+
+      if (it.payer === '一修') costXiu += cost;
+      if (it.payer === '大緯') costWei += cost;
+    });
+
+    const totalProfit = totalRevenue - totalCost;
+    const margin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
+
+    document.getElementById('statTotalCount').innerText = `${items.length} 筆`;
+    document.getElementById('statTotalRevenue').innerText = `NT$ ${totalRevenue}`;
+    document.getElementById('statTotalCost').innerText = `NT$ ${totalCost}`;
+    document.getElementById('statTotalProfit').innerText = `NT$ ${totalProfit}`;
+    document.getElementById('statPayerXiu').innerText = `NT$ ${costXiu}`;
+    document.getElementById('statPayerWei').innerText = `NT$ ${costWei}`;
+    document.getElementById('statMargin').innerText = `${margin} %`;
+  }
+</script>
+
+</body>
+</html>pp-title" content="微物所">
 
   <!-- 自動修復 iOS Safari JPG 圖示無效問題 -->
   <script>
