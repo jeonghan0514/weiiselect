@@ -3,117 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎀 日本代購助手 · Sanrio Style</title>
+  <title>⚡ 日本代購小幫手 · Poké Style</title>
   <style>
     :root {
-      --pastel-pink: #FFB7B2;
-      --pastel-deep-pink: #FF8B94;
-      --pastel-cream: #FFF5F5;
-      --pastel-blue: #E2F0CB;
-      --pastel-mint: #B5EAD7;
-      --pastel-purple: #C7CEEA;
-      --text-dark: #5D536B;
-      --text-light: #8D829E;
+      --poke-red: #E3350D;
+      --poke-red-dark: #B32505;
+      --poke-yellow: #FFCB05;
+      --poke-yellow-dark: #DDAA00;
+      --poke-blue: #30A7D7;
+      --poke-dark: #232323;
+      --poke-gray: #F2F2F2;
       --white: #FFFFFF;
     }
 
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; }
-    body { background-color: var(--pastel-cream); margin: 0; padding: 12px; color: var(--text-dark); }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--poke-gray); margin: 0; padding: 12px; color: var(--poke-dark); }
     .container { max-width: 480px; margin: 0 auto; }
 
-    /* 柔和頂部 Header */
+    /* 精靈球經典鮮明 Header */
     header {
-      background: linear-gradient(135deg, #FFDAC1, #FFB7B2);
+      background: linear-gradient(135deg, var(--poke-red) 60%, var(--poke-dark) 60%);
       color: white;
-      padding: 18px 16px;
-      border-radius: 20px;
+      padding: 16px;
+      border-radius: 16px;
       text-align: center;
-      box-shadow: 0 4px 15px rgba(255, 183, 178, 0.4);
+      box-shadow: 0 4px 12px rgba(227, 53, 13, 0.3);
       margin-bottom: 16px;
+      border-bottom: 4px solid var(--poke-yellow);
     }
-    header h1 { margin: 0; font-size: 1.3rem; letter-spacing: 1px; font-weight: 700; text-shadow: 1px 1px 2px rgba(255,255,255,0.4); }
+    header h1 { margin: 0; font-size: 1.3rem; letter-spacing: 1px; font-weight: 800; }
 
-    /* 分頁切換按鈕 (Tabs) */
+    /* 分頁標籤 (Tabs) */
     .tab-group {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       margin-bottom: 16px;
     }
     .tab-btn {
       flex: 1;
       padding: 12px;
       background: var(--white);
-      border: 2px solid #FFE5E5;
-      border-radius: 14px;
+      border: 2px solid #DDD;
+      border-radius: 12px;
       font-size: 0.95rem;
       font-weight: bold;
-      color: var(--text-light);
+      color: #666;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
     }
     .tab-btn.active {
-      background: var(--pastel-deep-pink);
+      background: var(--poke-red);
       color: white;
-      border-color: var(--pastel-deep-pink);
-      box-shadow: 0 4px 12px rgba(255, 139, 148, 0.3);
+      border-color: var(--poke-red);
+      box-shadow: 0 3px 8px rgba(227, 53, 13, 0.3);
     }
 
     /* 卡片與區塊 */
     .card {
       background: var(--white);
-      border-radius: 20px;
+      border-radius: 16px;
       padding: 18px;
       margin-bottom: 16px;
-      box-shadow: 0 4px 16px rgba(220, 200, 200, 0.15);
-      border: 1px solid #FFF0F0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      border-top: 5px solid var(--poke-yellow);
     }
-    .card h2 { font-size: 1.05rem; margin-top: 0; margin-bottom: 14px; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
+    .card h2 { font-size: 1.1rem; margin-top: 0; margin-bottom: 14px; color: var(--poke-dark); display: flex; align-items: center; gap: 6px; }
 
     /* 表單元件 */
     .form-group { margin-bottom: 12px; display: flex; flex-direction: column; }
-    .form-group label { font-size: 0.85rem; color: var(--text-light); margin-bottom: 6px; font-weight: bold; }
+    .form-group label { font-size: 0.85rem; color: #555; margin-bottom: 4px; font-weight: bold; }
     .form-group input, .form-group select {
-      padding: 11px 14px;
-      border: 2px solid #F6E6E8;
-      border-radius: 12px;
+      padding: 11px;
+      border: 2px solid #E0E0E0;
+      border-radius: 8px;
       font-size: 0.95rem;
       outline: none;
-      background: #FAFAFA;
-      color: var(--text-dark);
       transition: border-color 0.2s;
     }
     .form-group input:focus, .form-group select:focus {
-      border-color: var(--pastel-deep-pink);
-      background: var(--white);
+      border-color: var(--poke-blue);
     }
 
-    /* 買家快捷標籤 */
-    .quick-buyer-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 6px;
-    }
+    /* 快捷買家標籤 */
+    .quick-buyer-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
     .tag-btn {
-      background: #FFF0F2;
-      color: var(--pastel-deep-pink);
-      border: 1px solid #FFD6DA;
-      border-radius: 12px;
+      background: #FFF8D6;
+      color: #8A6D00;
+      border: 1px solid var(--poke-yellow);
+      border-radius: 8px;
       padding: 4px 10px;
       font-size: 0.8rem;
+      font-weight: bold;
       cursor: pointer;
-      transition: background 0.2s;
     }
-    .tag-btn:hover { background: var(--pastel-deep-pink); color: white; }
+    .tag-btn:hover { background: var(--poke-yellow); color: var(--poke-dark); }
 
     /* 價格預覽區 */
     .price-box {
-      background: #FFF9F9;
-      border: 2px dashed #FFD6DA;
+      background: #FFFDE7;
+      border: 2px dashed var(--poke-yellow-dark);
       padding: 12px;
-      border-radius: 14px;
-      color: var(--pastel-deep-pink);
-      font-size: 1.05rem;
+      border-radius: 10px;
+      color: var(--poke-red);
+      font-size: 1.1rem;
       text-align: center;
       margin-bottom: 14px;
     }
@@ -122,83 +114,111 @@
     .btn-main {
       width: 100%;
       padding: 13px;
-      background: linear-gradient(135deg, #FF8B94, #FFB7B2);
+      background: var(--poke-red);
       color: white;
       border: none;
-      border-radius: 14px;
+      border-radius: 10px;
       font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(255, 139, 148, 0.3);
-      transition: transform 0.1s;
+      box-shadow: 0 4px 10px rgba(227, 53, 13, 0.2);
     }
-    .btn-main:active { transform: scale(0.98); }
-    .btn-main:disabled { background: #E0E0E0; box-shadow: none; }
+    .btn-main:active { background: var(--poke-red-dark); }
+    .btn-main:disabled { background: #CCC; box-shadow: none; }
 
-    /* 清單列表樣式 */
+    /* 登記列表樣式 */
     .product-item {
       background: #FAFAFA;
-      border: 1px solid #F3E5E8;
-      padding: 12px 14px;
-      border-radius: 14px;
+      border: 1px solid #EAEAEA;
+      padding: 12px;
+      border-radius: 10px;
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     .buyer-badge {
-      background: var(--pastel-purple);
-      color: #4A4453;
+      background: var(--poke-blue);
+      color: white;
       font-size: 0.75rem;
-      padding: 3px 10px;
-      border-radius: 10px;
+      padding: 3px 8px;
+      border-radius: 6px;
       font-weight: bold;
     }
     .type-badge {
-      background: var(--pastel-mint);
-      color: #3B6B5B;
       font-size: 0.75rem;
-      padding: 2px 8px;
-      border-radius: 6px;
+      padding: 2px 6px;
+      border-radius: 4px;
       margin-left: 4px;
+      font-weight: bold;
     }
-    .twd-price { color: var(--pastel-deep-pink); font-weight: bold; font-size: 1.05rem; }
-    .btn-delete { background: #FFD3B6; color: #7A4B2A; border: none; padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; margin-left: 8px; }
+    .badge-merch { background: #E1F5FE; color: #0288D1; }
+    .badge-gachapon { background: #E8F5E9; color: #388E3C; }
+    .badge-ichiban { background: #FFF3E0; color: #F57C00; }
 
-    /* 買家統計卡片 */
+    .twd-price { color: var(--poke-red); font-weight: bold; font-size: 1.05rem; }
+    .btn-delete { background: #FF5252; color: white; border: none; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-left: 8px; }
+
+    /* 買家統計頁面分類卡片 */
     .buyer-summary-card {
       background: var(--white);
-      border-radius: 16px;
-      border: 2px solid #FFF0F0;
+      border-radius: 14px;
+      border: 2px solid #E0E0E0;
       padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      margin-bottom: 16px;
     }
     .buyer-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px dashed #F5E6E8;
-      padding-bottom: 10px;
+      border-bottom: 2px solid var(--poke-yellow);
+      padding-bottom: 8px;
       margin-bottom: 12px;
     }
-    .buyer-name { font-size: 1.05rem; font-weight: bold; color: var(--text-dark); }
-    .buyer-total { font-size: 1.15rem; font-weight: bold; color: var(--pastel-deep-pink); }
-    .buyer-item-list { font-size: 0.9rem; color: var(--text-dark); line-height: 1.6; }
+    .buyer-name { font-size: 1.1rem; font-weight: bold; color: var(--poke-dark); }
+    .buyer-total { font-size: 1.2rem; font-weight: bold; color: var(--poke-red); }
+
+    /* 分類小區塊 */
+    .category-block {
+      background: #F9F9FA;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-left: 4px solid #CCC;
+    }
+    .category-block.cat-merch { border-left-color: #0288D1; }
+    .category-block.cat-gachapon { border-left-color: #388E3C; }
+    .category-block.cat-ichiban { border-left-color: #F57C00; }
+
+    .category-title {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #666;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .category-item {
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
     .btn-copy {
-      margin-top: 12px;
+      margin-top: 10px;
       width: 100%;
-      background: var(--pastel-mint);
-      color: #2D5E4E;
+      background: var(--poke-yellow);
+      color: var(--poke-dark);
       border: none;
       padding: 10px;
-      border-radius: 12px;
+      border-radius: 8px;
       font-size: 0.9rem;
       font-weight: bold;
       cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
-    /* 隱藏未選中的分頁 */
     .tab-content { display: none; }
     .tab-content.active { display: block; }
   </style>
@@ -207,19 +227,19 @@
 
 <div class="container">
   <header>
-    <h1>🎀 日本現場連線小幫手</h1>
+    <h1>⚡ 日本現場代購助手</h1>
   </header>
 
   <!-- 分頁按鈕 -->
   <div class="tab-group">
-    <button class="tab-btn active" onclick="switchTab('tab-entry')">📝 登記採購</button>
-    <button class="tab-btn" onclick="switchTab('tab-summary')">🌸 買家對帳</button>
+    <button class="tab-btn active" onclick="switchTab('tab-entry')">📝 採購登記</button>
+    <button class="tab-btn" onclick="switchTab('tab-summary')">📊 買家對帳</button>
   </div>
 
-  <!-- 分頁一：登記表單與總列表 -->
+  <!-- 分頁一：登記表單與列表 -->
   <div id="tab-entry" class="tab-content active">
     <div class="card">
-      <h2>✨ 新增代購商品</h2>
+      <h2>⚡ 新增代購商品</h2>
       
       <div class="form-group">
         <label>購買人姓名 / 帳號</label>
@@ -229,14 +249,15 @@
 
       <div class="form-group">
         <label>商品名稱</label>
-        <input type="text" id="title" placeholder="例如：美樂蒂吊飾">
+        <input type="text" id="title" placeholder="例如：皮卡丘公仔">
       </div>
 
       <div class="form-group">
         <label>計價類型</label>
         <select id="type" onchange="calcPrice()">
-          <option value="merch">商品 / 一番賞 (匯率 0.27)</option>
-          <option value="gachapon">扭蛋 (固定對照表)</option>
+          <option value="merch">🛍️ 一般商品 (匯率 0.27)</option>
+          <option value="gachapon">🎰 扭蛋 (固定對照表)</option>
+          <option value="ichiban">🎟️ 一番賞 (匯率 0.27)</option>
         </select>
       </div>
 
@@ -249,19 +270,19 @@
         算得台幣售價：<strong id="priceTwd">NT$ 0</strong>
       </div>
 
-      <button class="btn-main" id="submitBtn" onclick="submitProduct()">🌸 確認儲存紀錄</button>
+      <button class="btn-main" id="submitBtn" onclick="submitProduct()">⚡ 確認儲存紀錄</button>
     </div>
 
     <div class="card">
-      <h2>🛍️ 即時登記記錄</h2>
+      <h2>📋 即時採購明細</h2>
       <div id="productList">載入中...</div>
     </div>
   </div>
 
-  <!-- 分頁二：買家總覽統計 -->
+  <!-- 分頁二：買家分類對帳統計 -->
   <div id="tab-summary" class="tab-content">
     <div class="card">
-      <h2>📊 買家消費總覽</h2>
+      <h2>📊 買家消費分類對帳</h2>
       <div id="buyerSummaryList">載入中...</div>
     </div>
   </div>
@@ -289,13 +310,19 @@
 
   let currentProducts = [];
 
-  // 扭蛋固定價格對照表
+  // 扭蛋對照表
   const gachaponTable = {
     100: 40, 200: 70, 300: 100, 400: 130, 500: 160,
     600: 200, 700: 220, 800: 250, 1000: 300, 2000: 580
   };
 
-  // 切換分頁
+  const typeMap = {
+    merch: { name: '一般商品', badgeClass: 'badge-merch', catClass: 'cat-merch', icon: '🛍️' },
+    gachapon: { name: '扭蛋', badgeClass: 'badge-gachapon', catClass: 'cat-gachapon', icon: '🎰' },
+    ichiban: { name: '一番賞', badgeClass: 'badge-ichiban', catClass: 'cat-ichiban', icon: '🎟️' }
+  };
+
+  // 分頁切換
   window.switchTab = function(tabId) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -308,12 +335,11 @@
     document.getElementById(tabId).classList.add('active');
   };
 
-  // 快捷填寫買家名字
   window.setBuyer = function(name) {
     document.getElementById('buyer').value = name;
   };
 
-  // 匯率計算
+  // 算價邏輯
   window.calcPrice = function() {
     const type = document.getElementById('type').value;
     const jpy = Number(document.getElementById('priceJpy').value) || 0;
@@ -329,7 +355,7 @@
     return twd;
   };
 
-  // 提交產品
+  // 儲存商品
   window.submitProduct = async function() {
     const buyer = document.getElementById('buyer').value.trim();
     const title = document.getElementById('title').value.trim();
@@ -364,7 +390,7 @@
       alert('儲存失敗，請檢查網路！');
     } finally {
       btn.disabled = false;
-      btn.innerText = '🌸 確認儲存紀錄';
+      btn.innerText = '⚡ 確認儲存紀錄';
     }
   };
 
@@ -376,17 +402,17 @@
     }
   };
 
-  // 複製明細
-  window.copyBuyerDetails = function(buyerName, total, itemsText) {
-    const text = `【日本代購對帳單 - ${buyerName}】\n-------------------\n${itemsText}-------------------\n合計台幣：NT$ ${total}`;
+  // 複製對帳文字（含分類細項）
+  window.copyBuyerDetails = function(buyerName, total, copyText) {
+    const text = `【日本代購對帳單 - ${buyerName}】\n-------------------\n${copyText}-------------------\n合計台幣：NT$ ${total}`;
     navigator.clipboard.writeText(text).then(() => {
-      alert(`已複製 ${buyerName} 的明細，可直接貼給對方！`);
+      alert(`已複製 ${buyerName} 的分類帳單！`);
     }).catch(() => {
       alert('複製失敗，請手動複製');
     });
   };
 
-  // 即時資料繪製
+  // 即時資料處理
   onValue(productsRef, (snapshot) => {
     const data = snapshot.val();
     const productList = document.getElementById('productList');
@@ -394,8 +420,8 @@
     const quickBuyerTags = document.getElementById('quickBuyerTags');
 
     if (!data) {
-      productList.innerHTML = '<p style="color:#A095A5; text-align:center;">目前無採購紀錄</p>';
-      buyerSummaryList.innerHTML = '<p style="color:#A095A5; text-align:center;">尚無買家資料</p>';
+      productList.innerHTML = '<p style="color:#888; text-align:center;">目前無採購紀錄</p>';
+      buyerSummaryList.innerHTML = '<p style="color:#888; text-align:center;">尚無買家資料</p>';
       quickBuyerTags.innerHTML = '';
       return;
     }
@@ -408,14 +434,14 @@
 
     currentProducts.forEach(item => {
       buyerSet.add(item.buyer);
-      const typeText = item.type === 'gachapon' ? '扭蛋' : '商品';
+      const tInfo = typeMap[item.type] || typeMap.merch;
       entryHtml += `
         <div class="product-item">
           <div>
             <span class="buyer-badge">${item.buyer}</span>
-            <strong style="margin-left: 4px; font-size: 0.95rem;">${item.title}</strong>
-            <span class="type-badge">${typeText}</span>
-            <div style="color: #8D829E; font-size: 0.85rem; margin-top:4px;">¥ ${item.priceJpy}</div>
+            <strong style="margin-left: 4px;">${item.title}</strong>
+            <span class="type-badge ${tInfo.badgeClass}">${tInfo.icon} ${tInfo.name}</span>
+            <div style="color: #666; font-size: 0.85rem; margin-top:4px;">¥ ${item.priceJpy}</div>
           </div>
           <div style="text-align: right;">
             <div class="twd-price">NT$ ${item.priceTwd}</div>
@@ -426,48 +452,76 @@
     });
     productList.innerHTML = entryHtml;
 
-    // 2. 渲染買家快捷選擇標籤
+    // 2. 買家快捷標籤
     let tagsHtml = '';
     buyerSet.forEach(name => {
       tagsHtml += `<button class="tag-btn" type="button" onclick="setBuyer('${name}')">+ ${name}</button>`;
     });
     quickBuyerTags.innerHTML = tagsHtml;
 
-    // 3. 依「買家」歸類統計
+    // 3. 依「買家」與「類別」雙重歸類統計
     const buyerMap = {};
     currentProducts.forEach(item => {
       if (!buyerMap[item.buyer]) {
-        buyerMap[item.buyer] = { total: 0, items: [] };
+        buyerMap[item.buyer] = {
+          total: 0,
+          categories: { merch: [], gachapon: [], ichiban: [] }
+        };
       }
-      buyerMap[item.buyer].items.push(item);
+      const itemType = item.type || 'merch';
+      buyerMap[item.buyer].categories[itemType].push(item);
       buyerMap[item.buyer].total += item.priceTwd;
     });
 
     let summaryHtml = '';
     Object.keys(buyerMap).forEach(buyerName => {
       const group = buyerMap[buyerName];
-      let itemsLines = '';
-      let copyTextLines = '';
+      let blocksHtml = '';
+      let copyTextFull = '';
 
-      group.items.forEach(it => {
-        itemsLines += `<div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-          <span>• ${it.title} (¥${it.priceJpy})</span>
-          <strong>NT$ ${it.priceTwd}</strong>
-        </div>`;
-        copyTextLines += `• ${it.title}：NT$ ${it.priceTwd}\n`;
+      // 針對三種分類分別輸出
+      ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
+        const catItems = group.categories[catKey];
+        if (catItems.length > 0) {
+          const tInfo = typeMap[catKey];
+          let catTotal = 0;
+          let catItemsHtml = '';
+          let catCopyText = `【${tInfo.icon} ${tInfo.name}】\n`;
+
+          catItems.forEach(it => {
+            catTotal += it.priceTwd;
+            catItemsHtml += `
+              <div class="category-item">
+                <span>• ${it.title} (¥${it.priceJpy})</span>
+                <strong>NT$ ${it.priceTwd}</strong>
+              </div>
+            `;
+            catCopyText += `  • ${it.title}：NT$ ${it.priceTwd}\n`;
+          });
+
+          blocksHtml += `
+            <div class="category-block ${tInfo.catClass}">
+              <div class="category-title">
+                <span>${tInfo.icon} ${tInfo.name} (${catItems.length}件)</span>
+                <span>小計 NT$ ${catTotal}</span>
+              </div>
+              ${catItemsHtml}
+            </div>
+          `;
+
+          copyTextFull += `${catCopyText}  小計：NT$ ${catTotal}\n\n`;
+        }
       });
 
       summaryHtml += `
         <div class="buyer-summary-card">
           <div class="buyer-header">
-            <span class="buyer-name">🎀 ${buyerName}</span>
-            <span class="buyer-total">NT$ ${group.total}</span>
+            <span class="buyer-name">👤 ${buyerName}</span>
+            <span class="buyer-total">總計 NT$ ${group.total}</span>
           </div>
-          <div class="buyer-item-list">
-            ${itemsLines}
-          </div>
-          <button class="btn-copy" onclick="copyBuyerDetails('${buyerName}', ${group.total}, \`${copyTextLines}\`)">
-            📋 複製 ${buyerName} 的帳單明細
+          ${blocksHtml}
+          <button class="btn-copy" onclick="copyBuyerDetails('${buyerName}', ${group.total}, \`${copyTextFull}\`)">
+            📋 複製 ${buyerName} 的分類帳單
           </button>
         </div>
       `;
