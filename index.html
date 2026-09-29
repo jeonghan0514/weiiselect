@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>微物所 weii select｜日本連線代購</title>
+
+  <!-- 手機「新增至主畫面」桌面小圖示設定 (讀取 logo.jpg) -->
+  <link rel="apple-touch-icon" href="logo.jpg">
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+
   <style>
     :root {
       --poke-red: #E53935;
@@ -76,7 +81,7 @@
     }
     .card h2 { font-size: 1.05rem; margin-top: 0; margin-bottom: 12px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center; }
 
-    /* 表單元件 (修正手機 date 寬度溢出) */
+    /* 表單元件 */
     .form-group { margin-bottom: 10px; display: flex; flex-direction: column; min-width: 0; }
     .form-group label { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 4px; font-weight: bold; }
     .form-group input, .form-group select {
@@ -92,7 +97,6 @@
       border-color: var(--poke-blue); background-color: #FFFFFF;
     }
     
-    /* 調整日期的網格比例：日期 65% / 代墊人 35% */
     .date-row { display: grid; grid-template-columns: 1.8fr 1fr; gap: 8px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
