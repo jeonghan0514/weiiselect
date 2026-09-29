@@ -47,7 +47,7 @@
       box-shadow: 0 2px 6px rgba(229, 57, 53, 0.2);
     }
 
-    /* 主卡片樣式 */
+    /* 卡片樣式 */
     .card {
       background: var(--card-bg); border-radius: 16px; padding: 16px;
       margin-bottom: 14px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
@@ -75,7 +75,7 @@
       font-size: 0.78rem; font-weight: bold; cursor: pointer;
     }
 
-    /* 成本設定區 (付款方式選單) */
+    /* 成本設定區 */
     .cost-setting-box {
       background: #F0F4F8; padding: 10px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #D9E2EC;
     }
@@ -110,7 +110,6 @@
     .badge-merch { background: #E1F5FE; color: #0288D1; }
     .badge-gachapon { background: #E8F5E9; color: #2E7D32; }
     .badge-ichiban { background: #FFF3E0; color: #EF6C00; }
-    .badge-custom { background: #F3E5F5; color: #7B1FA2; }
 
     .twd-price { color: var(--poke-red); font-weight: bold; font-size: 1rem; }
     .profit-badge { font-size: 0.75rem; color: var(--poke-green); font-weight: bold; display: block; text-align: right; }
@@ -126,7 +125,6 @@
     .category-block.cat-merch { border-left-color: #0288D1; }
     .category-block.cat-gachapon { border-left-color: #2E7D32; }
     .category-block.cat-ichiban { border-left-color: #EF6C00; }
-    .category-block.cat-custom { border-left-color: #7B1FA2; }
 
     .category-title { font-size: 0.8rem; font-weight: bold; color: var(--text-sub); margin-bottom: 4px; display: flex; justify-content: space-between; }
     .category-item { font-size: 0.85rem; display: flex; justify-content: space-between; margin-bottom: 2px; }
@@ -158,7 +156,7 @@
     <button class="tab-btn" onclick="switchTab('tab-profit')">📈 成本利潤</button>
   </div>
 
-  <!-- 分頁一：登記 -->
+  <!-- 分頁一：採購登記 -->
   <div id="tab-entry" class="tab-content active">
     <div class="card">
       <h2>⚡ 新增代購商品</h2>
@@ -178,10 +176,10 @@
         <div class="form-group">
           <label>計價模式</label>
           <select id="type" onchange="onTypeChange()">
-            <option value="merch">🛍️ 一般商品 (0.27)</option>
+            <option value="merch">🛍️ 商品 (0.27)</option>
+            <option value="custom">🛍️ 商品 (自訂價)</option>
             <option value="gachapon">🎰 扭蛋 (固定對照表)</option>
             <option value="ichiban">🎟️ 一番賞 (0.27)</option>
-            <option value="custom">✨ 自訂售價 (人氣促銷價)</option>
           </select>
         </div>
 
@@ -191,10 +189,17 @@
         </div>
       </div>
 
-      <!-- 自訂售價輸入欄 (選 custom 時顯示) -->
-      <div class="form-group" id="customPriceGroup" style="display: none;">
-        <label>自訂台幣售價 (NT$)</label>
-        <input type="number" id="customTwd" placeholder="例如：250" oninput="calcPrice()">
+      <!-- 自訂價與加價併排 -->
+      <div class="form-row">
+        <div class="form-group" id="customPriceGroup" style="display: none;">
+          <label>自訂台幣售價 (NT$)</label>
+          <input type="number" id="customTwd" placeholder="例如：250" oninput="calcPrice()">
+        </div>
+
+        <div class="form-group">
+          <label>體積/重物加價 (NT$)</label>
+          <input type="number" id="extraFee" placeholder="例如：50 (無可不填)" oninput="calcPrice()">
+        </div>
       </div>
 
       <!-- 付款與成本設定 -->
@@ -204,20 +209,20 @@
             <label>付款方式</label>
             <select id="payMethod" onchange="onPayMethodChange()">
               <option value="card">💳 海外刷卡 (台幣+1.5%手續費)</option>
-              <option value="cash">💴 現金 / 扭蛋 (日幣換匯)</option>
+              <option value="cash">💴 現金 / 扭蛋 (匯率 0.2)</option>
             </select>
           </div>
 
-          <!-- 刷卡直接填台幣 -->
+          <!-- 刷卡填實際台幣 -->
           <div class="form-group" id="cardInputBlock" style="margin-bottom:0;">
             <label>刷卡台幣 (未含1.5%)</label>
             <input type="number" id="cardTwdInput" placeholder="例如：300" oninput="calcPrice()">
           </div>
 
-          <!-- 現金填換匯匯率 -->
+          <!-- 現金顯示固定匯率 0.2 -->
           <div class="form-group" id="cashInputBlock" style="display:none; margin-bottom:0;">
             <label>現金換匯匯率</label>
-            <input type="number" id="cashRateInput" value="0.205" step="0.001" oninput="calcPrice()">
+            <input type="number" id="cashRateInput" value="0.2" readonly style="background:#E0E0E0; color:#555;">
           </div>
         </div>
       </div>
@@ -242,7 +247,7 @@
     </div>
   </div>
 
-  <!-- 分頁二：對帳 -->
+  <!-- 分頁二：買家對帳 -->
   <div id="tab-summary" class="tab-content">
     <div class="card">
       <h2>📊 買家消費分類對帳</h2>
@@ -307,10 +312,10 @@
   };
 
   const typeMap = {
-    merch: { name: '一般商品', badgeClass: 'badge-merch', catClass: 'cat-merch', icon: '🛍️' },
+    merch: { name: '商品', badgeClass: 'badge-merch', catClass: 'cat-merch', icon: '🛍️' },
+    custom: { name: '商品(自訂)', badgeClass: 'badge-merch', catClass: 'cat-merch', icon: '🛍️' },
     gachapon: { name: '扭蛋', badgeClass: 'badge-gachapon', catClass: 'cat-gachapon', icon: '🎰' },
-    ichiban: { name: '一番賞', badgeClass: 'badge-ichiban', catClass: 'cat-ichiban', icon: '🎟️' },
-    custom: { name: '特價商品', badgeClass: 'badge-custom', catClass: 'cat-custom', icon: '✨' }
+    ichiban: { name: '一番賞', badgeClass: 'badge-ichiban', catClass: 'cat-ichiban', icon: '🎟️' }
   };
 
   window.switchTab = function(tabId) {
@@ -325,7 +330,7 @@
 
   window.setBuyer = function(name) { document.getElementById('buyer').value = name; };
 
-  // 計價模式切換（扭蛋預設切換至現金）
+  // 計價模式變更
   window.onTypeChange = function() {
     const type = document.getElementById('type').value;
     const customGroup = document.getElementById('customPriceGroup');
@@ -338,7 +343,7 @@
     calcPrice();
   };
 
-  // 付款方式切換（刷卡 / 現金）
+  // 付款方式變更
   window.onPayMethodChange = function() {
     const method = document.getElementById('payMethod').value;
     document.getElementById('cardInputBlock').style.display = (method === 'card') ? 'block' : 'none';
@@ -346,32 +351,37 @@
     calcPrice();
   };
 
-  // 核心計算邏輯
+  // 計算邏輯
   window.calcPrice = function() {
     const type = document.getElementById('type').value;
     const jpy = Number(document.getElementById('priceJpy').value) || 0;
+    const extraFee = Number(document.getElementById('extraFee').value) || 0;
     const payMethod = document.getElementById('payMethod').value;
 
-    // 1. 計算【台幣售價】
-    let twd = 0;
+    // 1. 計算【基礎台幣售價】+ 【加價】
+    let baseTwd = 0;
     if (type === 'gachapon') {
-      twd = gachaponTable[jpy] || Math.ceil(jpy * 0.27);
+      baseTwd = gachaponTable[jpy] || Math.ceil(jpy * 0.27);
     } else if (type === 'custom') {
-      twd = Number(document.getElementById('customTwd').value) || 0;
+      baseTwd = Number(document.getElementById('customTwd').value) || 0;
     } else {
-      twd = Math.ceil(jpy * 0.27);
+      baseTwd = Math.ceil(jpy * 0.27);
     }
 
-    // 2. 計算【台幣成本】
+    const twd = baseTwd + extraFee;
+
+    // 2. 計算【台幣成本】(固定現金匯率 0.2)
     let costTwd = 0;
     if (payMethod === 'card') {
-      // 刷卡：直接填入台幣金額 + 1.5% 國外手續費
-      const rawCardTwd = Number(document.getElementById('cardTwdInput').value) || 0;
+      const cardInput = document.getElementById('cardTwdInput');
+      // 如果刷卡輸入框為空，自動預填 (日幣 * 0.2) 方便使用者參考
+      if (!cardInput.value && jpy > 0) {
+        cardInput.placeholder = Math.round(jpy * 0.2);
+      }
+      const rawCardTwd = Number(cardInput.value) || Math.round(jpy * 0.2);
       costTwd = Math.ceil(rawCardTwd * 1.015);
     } else {
-      // 現金/扭蛋：日幣 * 現金匯率
-      const cashRate = Number(document.getElementById('cashRateInput').value) || 0.205;
-      costTwd = Math.ceil(jpy * cashRate);
+      costTwd = Math.ceil(jpy * 0.2);
     }
 
     const profitTwd = twd - costTwd;
@@ -380,17 +390,17 @@
     document.getElementById('costTwd').innerText = `NT$ ${costTwd}`;
     document.getElementById('profitTwd').innerText = `NT$ ${profitTwd}`;
 
-    return { twd, costTwd, profitTwd };
+    return { twd, costTwd, profitTwd, extraFee };
   };
 
-  // 儲存商品
+  // 儲存紀錄
   window.submitProduct = async function() {
     const buyer = document.getElementById('buyer').value.trim();
     const title = document.getElementById('title').value.trim();
     const priceJpy = Number(document.getElementById('priceJpy').value) || 0;
     const type = document.getElementById('type').value;
     const payMethod = document.getElementById('payMethod').value;
-    const { twd, costTwd, profitTwd } = window.calcPrice();
+    const { twd, costTwd, profitTwd, extraFee } = window.calcPrice();
 
     if (!buyer || !title) {
       alert('請填寫「購買人」與「商品名稱」！');
@@ -403,7 +413,7 @@
 
     try {
       await push(productsRef, {
-        buyer, title, type, priceJpy, payMethod,
+        buyer, title, type, priceJpy, payMethod, extraFee,
         priceTwd: twd, costTwd: costTwd, profitTwd: profitTwd,
         createdAt: Date.now()
       });
@@ -411,6 +421,7 @@
       document.getElementById('title').value = '';
       document.getElementById('priceJpy').value = '';
       document.getElementById('customTwd').value = '';
+      document.getElementById('extraFee').value = '';
       document.getElementById('cardTwdInput').value = '';
       window.calcPrice();
     } catch (e) {
@@ -433,7 +444,7 @@
     navigator.clipboard.writeText(text).then(() => alert(`已複製 ${buyerName} 的分類帳單！`));
   };
 
-  // Firebase 資料監聽
+  // 資料監聽與渲染
   onValue(productsRef, (snapshot) => {
     const data = snapshot.val();
     const productList = document.getElementById('productList');
@@ -458,6 +469,7 @@
       buyerSet.add(item.buyer);
       const tInfo = typeMap[item.type] || typeMap.merch;
       const payText = item.payMethod === 'card' ? '💳 刷卡' : '💴 現金';
+      const extraText = item.extraFee ? ` (+運費$${item.extraFee})` : '';
 
       entryHtml += `
         <div class="product-item">
@@ -466,7 +478,7 @@
             <strong style="margin-left: 4px;">${item.title}</strong>
             <span class="type-badge ${tInfo.badgeClass}">${tInfo.icon} ${tInfo.name}</span>
             <div style="color: #78909C; font-size: 0.8rem; margin-top:2px;">
-              ${item.priceJpy ? '¥'+item.priceJpy : ''} (${payText} 成本 NT$${item.costTwd})
+              ${item.priceJpy ? '¥'+item.priceJpy : ''}${extraText} (${payText} 成本 NT$${item.costTwd})
             </div>
           </div>
           <div style="text-align: right;">
@@ -486,14 +498,16 @@
     });
     quickBuyerTags.innerHTML = tagsHtml;
 
-    // 3. 分類對帳
+    // 3. 對帳 (自訂價與一般商品合併為 merch 分類)
     const buyerMap = {};
     currentProducts.forEach(item => {
       if (!buyerMap[item.buyer]) {
-        buyerMap[item.buyer] = { total: 0, categories: { merch: [], gachapon: [], ichiban: [], custom: [] } };
+        buyerMap[item.buyer] = { total: 0, categories: { merch: [], gachapon: [], ichiban: [] } };
       }
-      const itemType = item.type || 'merch';
-      buyerMap[item.buyer].categories[itemType].push(item);
+      let catType = item.type || 'merch';
+      if (catType === 'custom') catType = 'merch'; // 自訂價合併至一般商品
+
+      buyerMap[item.buyer].categories[catType].push(item);
       buyerMap[item.buyer].total += item.priceTwd;
     });
 
@@ -503,7 +517,7 @@
       let blocksHtml = '';
       let copyTextFull = '';
 
-      ['merch', 'gachapon', 'ichiban', 'custom'].forEach(catKey => {
+      ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
         const catItems = group.categories[catKey];
         if (catItems.length > 0) {
           const tInfo = typeMap[catKey];
@@ -513,13 +527,14 @@
 
           catItems.forEach(it => {
             catTotal += it.priceTwd;
+            const extraDesc = it.extraFee ? ` (含加價$${it.extraFee})` : '';
             catItemsHtml += `
               <div class="category-item">
-                <span>• ${it.title} ${it.priceJpy ? '(¥'+it.priceJpy+')' : ''}</span>
+                <span>• ${it.title}${extraDesc}</span>
                 <strong>NT$ ${it.priceTwd}</strong>
               </div>
             `;
-            catCopyText += `  • ${it.title}：NT$ ${it.priceTwd}\n`;
+            catCopyText += `  • ${it.title}${extraDesc}：NT$ ${it.priceTwd}\n`;
           });
 
           blocksHtml += `
