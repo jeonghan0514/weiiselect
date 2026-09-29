@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🇯🇵 日本現場代購助手 · 登入控制版</title>
+  <title>微物所 weii select｜日本連線代購</title>
   <style>
     :root {
       --poke-red: #E53935;
@@ -33,7 +33,7 @@
       border-bottom: 4px solid var(--poke-yellow);
       position: relative;
     }
-    header h1 { margin: 0; font-size: 1.2rem; font-weight: 700; }
+    header h1 { margin: 0; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.5px; }
     
     .logout-btn {
       position: absolute; right: 12px; top: 14px;
@@ -47,7 +47,11 @@
       margin-top: 40px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       border: 1px solid var(--border-color); border-top: 5px solid var(--poke-red);
     }
-    .login-card h2 { text-align: center; margin-top: 0; color: var(--poke-red); }
+    .login-card h2 {
+      text-align: center; margin-top: 0; margin-bottom: 20px;
+      color: var(--poke-red); font-size: 1.15rem; font-weight: 700;
+      line-height: 1.4; letter-spacing: 0.5px;
+    }
 
     /* 分頁標籤 */
     .tab-group { display: flex; gap: 6px; margin-bottom: 14px; }
@@ -156,9 +160,9 @@
 <body>
 
 <div class="container">
-  <!-- 登入卡片 (未登入時顯示) -->
+  <!-- 品牌登入卡片 -->
   <div id="loginView" class="login-card">
-    <h2>🔒 系統安全管理驗證</h2>
+    <h2>✨ 微物所 weii select｜日本連線代購</h2>
     <div class="form-group">
       <label>管理員帳號 (Email)</label>
       <input type="email" id="loginEmail" placeholder="admin@example.com">
@@ -167,13 +171,13 @@
       <label>密碼</label>
       <input type="password" id="loginPassword" placeholder="••••••••">
     </div>
-    <button class="btn-main" onclick="handleLogin()" style="margin-top: 10px;">登入後台</button>
+    <button class="btn-main" onclick="handleLogin()" style="margin-top: 10px;">登入管理後台</button>
   </div>
 
-  <!-- 主控制台 (登入後顯示) -->
+  <!-- 主控制台 -->
   <div id="appView" style="display: none;">
     <header>
-      <h1>⚡ 日本現場代購助手</h1>
+      <h1>✨ 微物所 weii select｜日本連線代購</h1>
       <button class="logout-btn" onclick="handleLogout()">登出</button>
     </header>
 
@@ -343,7 +347,7 @@
     ichiban: { name: '一番賞', badgeClass: 'badge-ichiban', catClass: 'cat-ichiban', icon: '🎟️' }
   };
 
-  // 登入狀態監聽
+  // 登入監聽
   onAuthStateChanged(auth, (user) => {
     if (user) {
       document.getElementById('loginView').style.display = 'none';
@@ -355,7 +359,6 @@
     }
   });
 
-  // 登入處理
   window.handleLogin = async function() {
     const email = document.getElementById('loginEmail').value.trim();
     const pass = document.getElementById('loginPassword').value;
@@ -367,7 +370,6 @@
     }
   };
 
-  // 登出處理
   window.handleLogout = function() {
     if (confirm('確定要登出嗎？')) {
       signOut(auth);
@@ -492,7 +494,6 @@
     navigator.clipboard.writeText(text).then(() => alert(`已複製 ${buyerName} 的分類帳單！`));
   };
 
-  // 載入與監聽資料庫
   function loadDatabaseData() {
     onValue(productsRef, (snapshot) => {
       const data = snapshot.val();
