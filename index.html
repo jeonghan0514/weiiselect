@@ -10,6 +10,7 @@
       --poke-yellow: #FFC107;
       --poke-yellow-light: #FFF8E1;
       --poke-blue: #1976D2;
+      --poke-purple: #7B1FA2;
       --poke-green: #2E7D32;
       --bg-color: #F8F9FA;
       --card-bg: #FFFFFF;
@@ -72,7 +73,7 @@
       margin-bottom: 14px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
       border: 1px solid var(--border-color);
     }
-    .card h2 { font-size: 1.05rem; margin-top: 0; margin-bottom: 12px; color: var(--text-main); }
+    .card h2 { font-size: 1.05rem; margin-top: 0; margin-bottom: 12px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center; }
 
     /* 表單元件 */
     .form-group { margin-bottom: 10px; display: flex; flex-direction: column; }
@@ -122,6 +123,7 @@
       border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
     }
     .buyer-badge { background: #E3F2FD; color: var(--poke-blue); font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+    .payer-badge { background: #F3E5F5; color: var(--poke-purple); font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 2px; }
     .type-badge { font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; margin-left: 4px; font-weight: bold; }
     .badge-merch { background: #E1F5FE; color: #0288D1; }
     .badge-gachapon { background: #E8F5E9; color: #2E7D32; }
@@ -192,6 +194,21 @@
       <div class="card">
         <h2>⚡ 新增代購商品</h2>
         
+        <!-- 日期與代墊人 併排 -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>購買日期</label>
+            <input type="date" id="purchaseDate">
+          </div>
+          <div class="form-group">
+            <label>代墊人</label>
+            <select id="payer">
+              <option value="修">修</option>
+              <option value="緯">緯</option>
+            </select>
+          </div>
+        </div>
+
         <div class="form-group">
           <label>購買人姓名 / 帳號</label>
           <input type="text" id="buyer" placeholder="例如：小明 / 彥蓉">
@@ -266,7 +283,13 @@
       </div>
 
       <div class="card">
-        <h2>📋 即時採購明細</h2>
+        <h2>
+          <span>📋 即時採購明細</span>
+          <!-- 日期篩選器 -->
+          <select id="dateFilter" onchange="renderProductList()" style="width: 140px; font-size: 0.8rem; padding: 4px 6px;">
+            <option value="all">📅 全部日期</option>
+          </select>
+        </h2>
         <div id="productList">載入中...</div>
       </div>
     </div>
@@ -282,7 +305,7 @@
     <!-- 分頁三：統計 -->
     <div id="tab-profit" class="tab-content">
       <div class="card">
-        <h2>📈 整體代購營運統計</h2>
+        <h2>📈 整體代購與拆帳統計</h2>
         <div class="stat-grid">
           <div class="stat-box">
             <div class="title">總採購筆數</div>
@@ -301,7 +324,20 @@
             <div class="number" id="statTotalProfit">NT$ 0</div>
           </div>
         </div>
-        <div class="stat-box">
+
+        <!-- 拆帳專區 -->
+        <div class="stat-grid" style="margin-top: 10px;">
+          <div class="stat-box">
+            <div class="title">修 總代墊金額</div>
+            <div class="number" id="statPayerXiu" style="color: var(--poke-purple);">NT$ 0</div>
+          </div>
+          <div class="stat-box">
+            <div class="title">緯 總代墊金額</div>
+            <div class="number" id="statPayerWei" style="color: var(--poke-purple);">NT$ 0</div>
+          </div>
+        </div>
+
+        <div class="stat-box" style="margin-top: 10px;">
           <div class="title">平均毛利率</div>
           <div class="number" id="statMargin">0 %</div>
         </div>
@@ -347,7 +383,9 @@
     ichiban: { name: '一番賞', badgeClass: 'badge-ichiban', catClass: 'cat-ichiban', icon: '🎟️' }
   };
 
-  // 登入監聽
+  // 初始化預設今日日期
+  document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
+
   onAuthStateChanged(auth, (user) => {
     if (user) {
       document.getElementById('loginView').style.display = 'none';
@@ -362,18 +400,15 @@
   window.handleLogin = async function() {
     const email = document.getElementById('loginEmail').value.trim();
     const pass = document.getElementById('loginPassword').value;
-
     try {
       await signInWithEmailAndPassword(auth, email, pass);
     } catch (e) {
-      alert('登入失敗，請確認帳號密碼是否正確！');
+      alert('登入失敗，請確認帳號密碼！');
     }
   };
 
   window.handleLogout = function() {
-    if (confirm('確定要登出嗎？')) {
-      signOut(auth);
-    }
+    if (confirm('確定要登出嗎？')) signOut(auth);
   };
 
   window.switchTab = function(tabId) {
@@ -445,6 +480,8 @@
   };
 
   window.submitProduct = async function() {
+    const purchaseDate = document.getElementById('purchaseDate').value;
+    const payer = document.getElementById('payer').value;
     const buyer = document.getElementById('buyer').value.trim();
     const title = document.getElementById('title').value.trim();
     const priceJpy = Number(document.getElementById('priceJpy').value) || 0;
@@ -463,7 +500,7 @@
 
     try {
       await push(productsRef, {
-        buyer, title, type, priceJpy, payMethod, extraFee,
+        purchaseDate, payer, buyer, title, type, priceJpy, payMethod, extraFee,
         priceTwd: twd, costTwd: costTwd, profitTwd: profitTwd,
         createdAt: Date.now()
       });
@@ -494,15 +531,60 @@
     navigator.clipboard.writeText(text).then(() => alert(`已複製 ${buyerName} 的分類帳單！`));
   };
 
+  // 獨立出的渲染列表函式（支援日期篩選）
+  window.renderProductList = function() {
+    const productList = document.getElementById('productList');
+    const filterDate = document.getElementById('dateFilter').value;
+
+    let filtered = currentProducts;
+    if (filterDate !== 'all') {
+      filtered = currentProducts.filter(item => item.purchaseDate === filterDate);
+    }
+
+    if (filtered.length === 0) {
+      productList.innerHTML = '<p style="color:#888; text-align:center;">此日期無採購紀錄</p>';
+      return;
+    }
+
+    let entryHtml = '';
+    filtered.forEach(item => {
+      const tInfo = typeMap[item.type] || typeMap.merch;
+      const payText = item.payMethod === 'card' ? '💳 刷卡' : '💴 現金';
+      const extraText = item.extraFee ? ` (+運費$${item.extraFee})` : '';
+      const itemPayer = item.payer || '未知';
+      const itemDate = item.purchaseDate || '';
+
+      entryHtml += `
+        <div class="product-item">
+          <div>
+            <span class="buyer-badge">${item.buyer}</span>
+            <span class="payer-badge">墊:${itemPayer}</span>
+            <strong style="margin-left: 2px;">${item.title}</strong>
+            <span class="type-badge ${tInfo.badgeClass}">${tInfo.icon} ${tInfo.name}</span>
+            <div style="color: #78909C; font-size: 0.78rem; margin-top:2px;">
+              ${itemDate} | ${item.priceJpy ? '¥'+item.priceJpy : ''}${extraText} (${payText} 成本 NT$${item.costTwd})
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <div class="twd-price">NT$ ${item.priceTwd}</div>
+            <span class="profit-badge">賺 NT$${item.profitTwd}</span>
+            <button class="btn-delete" onclick="deleteProduct('${item.key}')">刪除</button>
+          </div>
+        </div>
+      `;
+    });
+    productList.innerHTML = entryHtml;
+  };
+
   function loadDatabaseData() {
     onValue(productsRef, (snapshot) => {
       const data = snapshot.val();
-      const productList = document.getElementById('productList');
       const buyerSummaryList = document.getElementById('buyerSummaryList');
       const quickBuyerTags = document.getElementById('quickBuyerTags');
+      const dateFilterSelect = document.getElementById('dateFilter');
 
       if (!data) {
-        productList.innerHTML = '<p style="color:#888; text-align:center;">目前無採購紀錄</p>';
+        document.getElementById('productList').innerHTML = '<p style="color:#888; text-align:center;">目前無採購紀錄</p>';
         buyerSummaryList.innerHTML = '<p style="color:#888; text-align:center;">尚無買家資料</p>';
         quickBuyerTags.innerHTML = '';
         updateStatics([]);
@@ -511,41 +593,37 @@
 
       currentProducts = Object.keys(data).map(key => ({ key, ...data[key] })).reverse();
 
-      let entryHtml = '';
+      // 動態更新日期篩選選單
+      const dates = new Set();
       const buyerSet = new Set();
 
       currentProducts.forEach(item => {
         buyerSet.add(item.buyer);
-        const tInfo = typeMap[item.type] || typeMap.merch;
-        const payText = item.payMethod === 'card' ? '💳 刷卡' : '💴 現金';
-        const extraText = item.extraFee ? ` (+運費$${item.extraFee})` : '';
-
-        entryHtml += `
-          <div class="product-item">
-            <div>
-              <span class="buyer-badge">${item.buyer}</span>
-              <strong style="margin-left: 4px;">${item.title}</strong>
-              <span class="type-badge ${tInfo.badgeClass}">${tInfo.icon} ${tInfo.name}</span>
-              <div style="color: #78909C; font-size: 0.8rem; margin-top:2px;">
-                ${item.priceJpy ? '¥'+item.priceJpy : ''}${extraText} (${payText} 成本 NT$${item.costTwd})
-              </div>
-            </div>
-            <div style="text-align: right;">
-              <div class="twd-price">NT$ ${item.priceTwd}</div>
-              <span class="profit-badge">賺 NT$${item.profitTwd}</span>
-              <button class="btn-delete" onclick="deleteProduct('${item.key}')">刪除</button>
-            </div>
-          </div>
-        `;
+        if (item.purchaseDate) dates.add(item.purchaseDate);
       });
-      productList.innerHTML = entryHtml;
 
+      // 保存當前選中的日期
+      const currentSelectedDate = dateFilterSelect.value;
+      let dateOptions = '<option value="all">📅 全部日期</option>';
+      Array.from(dates).sort().reverse().forEach(d => {
+        dateOptions += `<option value="${d}">${d}</option>`;
+      });
+      dateFilterSelect.innerHTML = dateOptions;
+      if (Array.from(dates).includes(currentSelectedDate)) {
+        dateFilterSelect.value = currentSelectedDate;
+      }
+
+      // 1. 渲染產品清單
+      renderProductList();
+
+      // 2. 買家快捷標籤
       let tagsHtml = '';
       buyerSet.forEach(name => {
         tagsHtml += `<button class="tag-btn" type="button" onclick="setBuyer('${name}')">+ ${name}</button>`;
       });
       quickBuyerTags.innerHTML = tagsHtml;
 
+      // 3. 分類對帳
       const buyerMap = {};
       currentProducts.forEach(item => {
         if (!buyerMap[item.buyer]) {
@@ -619,10 +697,16 @@
   function updateStatics(items) {
     let totalRevenue = 0;
     let totalCost = 0;
+    let costXiu = 0;
+    let costWei = 0;
 
     items.forEach(it => {
+      const cost = it.costTwd || 0;
       totalRevenue += it.priceTwd || 0;
-      totalCost += it.costTwd || 0;
+      totalCost += cost;
+
+      if (it.payer === '修') costXiu += cost;
+      if (it.payer === '緯') costWei += cost;
     });
 
     const totalProfit = totalRevenue - totalCost;
@@ -632,6 +716,8 @@
     document.getElementById('statTotalRevenue').innerText = `NT$ ${totalRevenue}`;
     document.getElementById('statTotalCost').innerText = `NT$ ${totalCost}`;
     document.getElementById('statTotalProfit').innerText = `NT$ ${totalProfit}`;
+    document.getElementById('statPayerXiu').innerText = `NT$ ${costXiu}`;
+    document.getElementById('statPayerWei').innerText = `NT$ ${costWei}`;
     document.getElementById('statMargin').innerText = `${margin} %`;
   }
 </script>
