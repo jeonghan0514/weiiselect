@@ -61,6 +61,7 @@
     .form-group input, .form-group select {
       padding: 10px; border: 1.5px solid var(--border-color);
       border-radius: 8px; font-size: 0.9rem; outline: none; background-color: #FAFAFA;
+      width: 100%;
     }
     .form-group input:focus, .form-group select:focus {
       border-color: var(--poke-blue); background-color: #FFFFFF;
@@ -75,9 +76,9 @@
       font-size: 0.78rem; font-weight: bold; cursor: pointer;
     }
 
-    /* 成本設定區 */
+    /* 成本設定區 (獨立直排) */
     .cost-setting-box {
-      background: #F0F4F8; padding: 10px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #D9E2EC;
+      background: #F0F4F8; padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #D9E2EC;
     }
 
     /* 算價區 */
@@ -202,28 +203,26 @@
         </div>
       </div>
 
-      <!-- 付款與成本設定 -->
+      <!-- 付款與成本設定（拆成上下兩行獨立欄位） -->
       <div class="cost-setting-box">
-        <div class="form-row">
-          <div class="form-group" style="margin-bottom:0;">
-            <label>付款方式</label>
-            <select id="payMethod" onchange="onPayMethodChange()">
-              <option value="card">💳 海外刷卡 (台幣+1.5%手續費)</option>
-              <option value="cash">💴 現金 / 扭蛋 (匯率 0.2)</option>
-            </select>
-          </div>
+        <div class="form-group">
+          <label>付款方式</label>
+          <select id="payMethod" onchange="onPayMethodChange()">
+            <option value="card">💳 海外刷卡 (台幣+1.5%手續費)</option>
+            <option value="cash">💴 現金 / 扭蛋 (匯率 0.2)</option>
+          </select>
+        </div>
 
-          <!-- 刷卡填實際台幣 -->
-          <div class="form-group" id="cardInputBlock" style="margin-bottom:0;">
-            <label>刷卡台幣 (未含1.5%)</label>
-            <input type="number" id="cardTwdInput" placeholder="例如：300" oninput="calcPrice()">
-          </div>
+        <!-- 刷卡填實際台幣 (獨立單欄) -->
+        <div class="form-group" id="cardInputBlock" style="margin-bottom:0;">
+          <label>刷卡台幣 (未含1.5%手續費)</label>
+          <input type="number" id="cardTwdInput" placeholder="例如：300" oninput="calcPrice()">
+        </div>
 
-          <!-- 現金顯示固定匯率 0.2 -->
-          <div class="form-group" id="cashInputBlock" style="display:none; margin-bottom:0;">
-            <label>現金換匯匯率</label>
-            <input type="number" id="cashRateInput" value="0.2" readonly style="background:#E0E0E0; color:#555;">
-          </div>
+        <!-- 現金顯示固定匯率 0.2 (獨立單欄) -->
+        <div class="form-group" id="cashInputBlock" style="display:none; margin-bottom:0;">
+          <label>現金換匯匯率</label>
+          <input type="number" id="cashRateInput" value="0.2" readonly style="background:#E0E0E0; color:#555;">
         </div>
       </div>
 
@@ -330,7 +329,6 @@
 
   window.setBuyer = function(name) { document.getElementById('buyer').value = name; };
 
-  // 計價模式變更
   window.onTypeChange = function() {
     const type = document.getElementById('type').value;
     const customGroup = document.getElementById('customPriceGroup');
@@ -343,7 +341,6 @@
     calcPrice();
   };
 
-  // 付款方式變更
   window.onPayMethodChange = function() {
     const method = document.getElementById('payMethod').value;
     document.getElementById('cardInputBlock').style.display = (method === 'card') ? 'block' : 'none';
@@ -351,14 +348,12 @@
     calcPrice();
   };
 
-  // 計算邏輯
   window.calcPrice = function() {
     const type = document.getElementById('type').value;
     const jpy = Number(document.getElementById('priceJpy').value) || 0;
     const extraFee = Number(document.getElementById('extraFee').value) || 0;
     const payMethod = document.getElementById('payMethod').value;
 
-    // 1. 計算【基礎台幣售價】+ 【加價】
     let baseTwd = 0;
     if (type === 'gachapon') {
       baseTwd = gachaponTable[jpy] || Math.ceil(jpy * 0.27);
@@ -370,11 +365,9 @@
 
     const twd = baseTwd + extraFee;
 
-    // 2. 計算【台幣成本】(固定現金匯率 0.2)
     let costTwd = 0;
     if (payMethod === 'card') {
       const cardInput = document.getElementById('cardTwdInput');
-      // 如果刷卡輸入框為空，自動預填 (日幣 * 0.2) 方便使用者參考
       if (!cardInput.value && jpy > 0) {
         cardInput.placeholder = Math.round(jpy * 0.2);
       }
@@ -393,7 +386,6 @@
     return { twd, costTwd, profitTwd, extraFee };
   };
 
-  // 儲存紀錄
   window.submitProduct = async function() {
     const buyer = document.getElementById('buyer').value.trim();
     const title = document.getElementById('title').value.trim();
@@ -444,7 +436,6 @@
     navigator.clipboard.writeText(text).then(() => alert(`已複製 ${buyerName} 的分類帳單！`));
   };
 
-  // 資料監聽與渲染
   onValue(productsRef, (snapshot) => {
     const data = snapshot.val();
     const productList = document.getElementById('productList');
@@ -461,7 +452,6 @@
 
     currentProducts = Object.keys(data).map(key => ({ key, ...data[key] })).reverse();
 
-    // 1. 即時列表
     let entryHtml = '';
     const buyerSet = new Set();
 
@@ -491,21 +481,19 @@
     });
     productList.innerHTML = entryHtml;
 
-    // 2. 買家標籤
     let tagsHtml = '';
     buyerSet.forEach(name => {
       tagsHtml += `<button class="tag-btn" type="button" onclick="setBuyer('${name}')">+ ${name}</button>`;
     });
     quickBuyerTags.innerHTML = tagsHtml;
 
-    // 3. 對帳 (自訂價與一般商品合併為 merch 分類)
     const buyerMap = {};
     currentProducts.forEach(item => {
       if (!buyerMap[item.buyer]) {
         buyerMap[item.buyer] = { total: 0, categories: { merch: [], gachapon: [], ichiban: [] } };
       }
       let catType = item.type || 'merch';
-      if (catType === 'custom') catType = 'merch'; // 自訂價合併至一般商品
+      if (catType === 'custom') catType = 'merch';
 
       buyerMap[item.buyer].categories[catType].push(item);
       buyerMap[item.buyer].total += item.priceTwd;
