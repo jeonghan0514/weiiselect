@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🇯🇵 日本線下代購連線</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f7; margin: 0; padding: 12px; color: #333; }
+    .container { max-width: 480px; margin: 0 auto; }
+    h1 { text-align: center; font-size: 1.3rem; margin-bottom: 16px; }
+    .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .card h2 { font-size: 1.1rem; margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    .form-group { margin-bottom: 12px; display: flex; flex-direction: column; }
+    .form-group label { font-size: 0.85rem; color: #666; margin-bottom: 4px; font-weight: bold; }
+    .form-group input, .form-group select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
+    .price-box { background: #eef6ff; padding: 12px; border-radius: 6px; color: #0056b3; font-size: 1.1rem; text-align: center; margin-bottom: 12px; }
+    .btn { width: 100%; padding: 12px; background: #007aff; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+    .btn:disabled { background: #ccc; }
+    .product-item { border: 1px solid #eee; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .badge { font-size: 0.75rem; background: #e0e0e0; padding: 2px 6px; border-radius: 4px; margin-left: 4px; }
+    .twd-price { color: #e4393c; font-weight: bold; font-size: 1.1rem; }
+    .delete-btn { background: #ff3b30; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; margin-left: 8px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🇯🇵 日本線下代購</h1>
+
+  <!-- 賣家快速上架區 -->
+  <div class="card">
+    <h2>⚡ 現場快速上架</h2>
+    <div class="form-group">
+      <label>商品名稱</label>
+      <input type="text" id="title" placeholder="例如：吉伊卡哇公仔">
+    </div>
+
+    <div class="form-group">
+      <label>計價類型</label>
+      <select id="type" onchange="calcPrice()">
+        <option value="merch">商品 / 一番賞 (匯率 0.27)</option>
+        <option value="gachapon">扭蛋 (固定對照表)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>日幣價格 (¥)</label>
+      <input type="number" id="priceJpy" placeholder="例如：500" oninput="calcPrice()">
+    </div>
+
+    <div class="price-box">
+      台幣售價：<strong id="priceTwd">NT$ 0</strong>
+    </div>
+
+    <button class="btn" id="submitBtn" onclick="submitProduct()">確認發布</button>
+  </div>
+
+  <!-- 商品展示區 -->
+  <div class="card">
+    <h2>🛍️ 即時連線列表</h2>
+    <div id="productList">載入中...</div>
+  </div>
+</div>
+
+<!-- 載入 Firebase SDK (Realtime Database 模組) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  // 已整合你的 Firebase 設定檔
+  const firebaseConfig = {
+    apiKey: "AIzaSyBgm9M8aCSJH8iOf1_X-ZKSX4k9iiSyX1U",
+    authDomain: "weiiselect.firebaseapp.com",
+    databaseURL: "https://weiiselect-default-rtdb.firebaseio.com",
+    projectId: "weiiselect",
+    storageBucket: "weiiselect.firebasestorage.app",
+    messagingSenderId: "379762570674",
+    appId: "1:379762570674:web:2d45f355e153381ff060ab",
+    measurementId: "G-MTYYGM67Y9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const productsRef = ref(db, 'products');
+
+  // 扭蛋對照表
+  const gachaponTable = {
+    100: 40, 200: 70, 300: 100, 400: 130, 500: 160,
+    600: 200, 700: 220, 800: 250, 1000: 300, 2000: 580
+  };
+
+  // 匯率計算
+  window.calcPrice = function() {
+    const type = document.getElementById('type').value;
+    const jpy = Number(document.getElementById('priceJpy').value) || 0;
+    let twd = 0;
+
+    if (type === 'gachapon') {
+      twd = gachaponTable[jpy] || Math.ceil(jpy * 0.27);
+    } else {
+      twd = Math.ceil(jpy * 0.27);
+    }
+
+    document.getElementById('priceTwd').innerText = `NT$ ${twd}`;
+    return twd;
+  };
+
+  // 發布商品至 Firebase Realtime Database
+  window.submitProduct = async function() {
+    const title = document.getElementById('title').value;
+    const priceJpy = Number(document.getElementById('priceJpy').value);
+    const type = document.getElementById('type').value;
+    const priceTwd = window.calcPrice();
+
+    if (!title || !priceJpy) {
+      alert('請填寫商品名稱與日幣金額！');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = '發布中...';
+
+    try {
+      await push(productsRef, {
+        title: title,
+        type: type,
+        priceJpy: priceJpy,
+        priceTwd: priceTwd,
+        createdAt: Date.now()
+      });
+
+      document.getElementById('title').value = '';
+      document.getElementById('priceJpy').value = '';
+      window.calcPrice();
+      alert('商品發布成功！');
+    } catch (e) {
+      console.error(e);
+      alert('發布失敗，請檢查資料庫權限設定！');
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '確認發布';
+    }
+  };
+
+  // 刪除商品
+  window.deleteProduct = function(key) {
+    if (confirm('確定要刪除這筆商品嗎？')) {
+      const itemRef = ref(db, `products/${key}`);
+      remove(itemRef);
+    }
+  };
+
+  // 即時監聽資料庫變化
+  onValue(productsRef, (snapshot) => {
+    const productList = document.getElementById('productList');
+    const data = snapshot.val();
+
+    if (!data) {
+      productList.innerHTML = '<p style="color:#888; text-align:center;">目前沒有商品</p>';
+      return;
+    }
+
+    let html = '';
+    // 將物件轉為陣列並按時間倒序排列
+    const items = Object.keys(data).map(key => ({ key, ...data[key] })).reverse();
+
+    items.forEach(item => {
+      const typeText = item.type === 'gachapon' ? '扭蛋' : '商品/一番賞';
+      html += `
+        <div class="product-item">
+          <div>
+            <strong>${item.title}</strong>
+            <span class="badge">${typeText}</span>
+            <div style="color: #666; font-size: 0.85rem; margin-top:2px;">¥ ${item.priceJpy}</div>
+          </div>
+          <div style="text-align: right;">
+            <span class="twd-price">NT$ ${item.priceTwd}</span>
+            <button class="delete-btn" onclick="deleteProduct('${item.key}')">刪除</button>
+          </div>
+        </div>
+      `;
+    });
+
+    productList.innerHTML = html;
+  });
+</script>
+
+</body>
+</html>
