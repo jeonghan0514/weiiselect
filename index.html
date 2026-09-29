@@ -5,13 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>微物所 weii select｜日本連線代購</title>
 
-  <!-- 手機「新增至主畫面」桌面小圖示與 App 模式完整設定 -->
-  <link rel="apple-touch-icon" sizes="180x180" href="logo.jpg">
-  <link rel="apple-touch-icon" href="logo.jpg">
+  <!-- iOS 主畫面圖示最佳化設定 -->
+  <link rel="apple-touch-icon" id="appleIcon" href="logo.jpg">
   <link rel="icon" type="image/jpeg" href="logo.jpg">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="微物所">
+
+  <!-- 自動修復 iOS Safari JPG 圖示無效問題 -->
+  <script>
+    (function() {
+      var img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        var pngData = canvas.toDataURL('image/png');
+        
+        var link = document.getElementById('appleIcon');
+        if (link) {
+          link.href = pngData;
+          link.type = 'image/png';
+        }
+      };
+      img.src = 'logo.jpg';
+    })();
+  </script>
 
   <style>
     :root {
@@ -464,7 +486,7 @@
         <label>付款方式</label>
         <select id="m_payMethod" onchange="onPayMethodChange('m_')">
           <option value="card">💳 海外刷卡 (台幣+1.5%手續費)</option>
-          <option value="cash">💴 現金 / 扭蛋 (匯率 0.2)</option>
+          <option value="cash">💴 現金 / 扭蛋 (汇率 0.2)</option>
         </select>
       </div>
 
