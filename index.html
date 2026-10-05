@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>微物所 weii select｜日本連線代購</title>
+  <title>微物所 weii select｜日本連線代購 v2.0</title>
 
   <!-- iOS 主畫面圖示最佳化設定 -->
   <link rel="apple-touch-icon" id="appleIcon" href="logo.jpg">
@@ -16,29 +16,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-
-  <!-- 自動修復 iOS Safari JPG 圖示問題 -->
-  <script>
-    (function() {
-      var img = new Image();
-      img.crossOrigin = 'Anonymous';
-      img.onload = function() {
-        var canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        var ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-        var pngData = canvas.toDataURL('image/png');
-        
-        var link = document.getElementById('appleIcon');
-        if (link) {
-          link.href = pngData;
-          link.type = 'image/png';
-        }
-      };
-      img.src = 'logo.jpg';
-    })();
-  </script>
 
   <style>
     :root {
@@ -575,7 +552,7 @@
       <button class="close-modal-btn" onclick="closeImgModal()">✕</button>
     </div>
     <div class="img-preview-box">
-      <div class="img-preview-tip" id="previewTip">⏳ 正在為您生成圖片，請稍候...</div>
+      <div class="img-preview-tip" id="previewTip">⏳ 正在繪製高清圖片，請稍候...</div>
       <img id="previewImg" src="" alt="對帳單圖片" style="display: none;">
       <button class="btn-main" onclick="closeImgModal()" style="background:#607D8B; margin-top: 6px;">關閉視窗</button>
     </div>
@@ -836,10 +813,10 @@
     }
   };
 
-  // 🎨 終極武器：純 HTML5 Canvas 向量原生成圖，完全繞過 html2canvas 與 iOS Safari 排版蟲！
-  window.downloadBuyerImageCanvas = function(buyerName) {
+  // 🎨 純 Canvas 向量畫布直接產圖（徹底告別 HTML 轉圖亂碼與空格）
+  window.downloadCanvasDirect = function(buyerName) {
     document.getElementById('previewTitle').innerText = `📷 ${buyerName} 的對帳單`;
-    document.getElementById('previewTip').innerText = `⏳ 正在繪製圖片中...`;
+    document.getElementById('previewTip').innerText = `⏳ 正在繪製高清圖片，請稍候...`;
     document.getElementById('previewImg').style.display = 'none';
     document.getElementById('imgPreviewModal').style.display = 'flex';
 
@@ -855,71 +832,53 @@
       grandTotal += (it.priceTwd || 0);
     });
 
-    // 動態計算 Canvas 高度
-    const W = 1000; // 高解析 2x 畫布寬度 (等同 500px 顯示)
-    let currentY = 0;
+    const W = 1000;
+    let currentY = 120 + 120; // Banner(120) + Buyer Row(120)
 
-    // Header: 120px
-    currentY += 120; 
-    // Buyer Info Row: 120px
-    currentY += 120;
-
-    // 各分類區塊動態高度
     ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
       const list = grouped[catKey];
       if (list.length > 0) {
-        currentY += 70; // 分類標題
-        currentY += list.length * 60; // 每筆商品 60px
-        currentY += 30; // 間距
+        currentY += 70 + list.length * 60 + 30;
       }
     });
-
-    // Footer Thanks: 160px
-    currentY += 160;
+    currentY += 160; // Footer
 
     const H = currentY;
 
-    // 建立 Canvas 畫布
     const canvas = document.createElement('canvas');
     canvas.width = W;
     canvas.height = H;
     const ctx = canvas.getContext('2d');
 
-    // 1. 全局背景白色
+    // 背景白色
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, W, H);
 
-    // 2. 頂欄紅黃 Banner Header
+    // 頂欄 Banner
     ctx.fillStyle = '#E53935';
     ctx.fillRect(0, 0, W, 110);
     ctx.fillStyle = '#FFC107';
     ctx.fillRect(0, 110, W, 10);
 
-    // Banner 文字
     ctx.fillStyle = '#FFFFFF';
     ctx.font = 'bold 38px "Noto Sans TC", sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('✨ 微物所 weii select ｜ 10/4-10/10日本連線', W / 2, 55);
 
-    // 3. 買家與總計列
+    // 買家資訊列
     let Y = 160;
-    
-    // 買家姓名 (左)
     ctx.textAlign = 'left';
     ctx.fillStyle = '#1A252C';
     ctx.font = 'bold 44px "Noto Sans TC", sans-serif';
     ctx.fillText(`👤 買家：${buyerName}`, 40, Y);
 
-    // 總計 (右)
     ctx.textAlign = 'right';
     ctx.fillStyle = '#E53935';
     ctx.font = 'bold 44px "Noto Sans TC", sans-serif';
     ctx.fillText(`總計 NT$ ${grandTotal}`, W - 40, Y);
 
     Y += 45;
-
-    // 虛線分隔線
     ctx.strokeStyle = '#FFE082';
     ctx.lineWidth = 4;
     ctx.setLineDash([12, 12]);
@@ -927,11 +886,11 @@
     ctx.moveTo(40, Y);
     ctx.lineTo(W - 40, Y);
     ctx.stroke();
-    ctx.setLineDash([]); // 恢復實線
+    ctx.setLineDash([]);
 
     Y += 50;
 
-    // 4. 繪製商品分類卡片
+    // 分類卡片
     ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
       const list = grouped[catKey];
       if (list.length > 0) {
@@ -941,29 +900,25 @@
 
         const blockHeight = 60 + list.length * 60;
 
-        // 圓角灰色底塊
         ctx.fillStyle = '#FAFAFA';
         ctx.beginPath();
         ctx.roundRect(40, Y, W - 80, blockHeight, 20);
         ctx.fill();
 
-        // 左側邊界顏色條
         ctx.fillStyle = tInfo.color;
         ctx.beginPath();
         ctx.roundRect(40, Y, 12, blockHeight, [20, 0, 0, 20]);
         ctx.fill();
 
-        // 分類標題
         let innerY = Y + 42;
         ctx.textAlign = 'left';
-        ctx.fillStyle = '#546E7A';
-        ctx.font = 'bold 34px "Noto Sans TC", sans-serif';
-        ctx.fillText(`${tInfo.icon} ${tInfo.name} (${list.length}筆)`, 70, innerY);
+        ctx.fillStyle = '#7F8C8D';
+        ctx.font = 'bold 32px "Noto Sans TC", sans-serif';
+        ctx.fillText(`${tInfo.icon} ${tInfo.name} (${list.length}筆)`, 75, innerY);
 
         ctx.textAlign = 'right';
         ctx.fillText(`小計 NT$ ${catTotal}`, W - 70, innerY);
 
-        // 商品明細列表
         list.forEach(item => {
           innerY += 60;
           const qtyStr = (item.qty && item.qty > 1) ? ` x ${item.qty}` : '';
@@ -983,7 +938,7 @@
       }
     });
 
-    // 5. 底部感謝標語 (灰色背景塊)
+    // 頁尾
     const footerH = H - Y;
     ctx.fillStyle = '#FAF9F6';
     ctx.fillRect(0, Y, W, footerH);
@@ -996,12 +951,11 @@
     ctx.stroke();
 
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#607D8B';
-    ctx.font = '500 30px "Noto Sans TC", sans-serif';
+    ctx.fillStyle = '#78909C';
+    ctx.font = '500 28px "Noto Sans TC", sans-serif';
     ctx.fillText('🌸 謝謝大家一路陪著「微物所」一起旅行 ✈️', W / 2, Y + 55);
     ctx.fillText('這趟旅程也因為有大家，變得更加有意義 💕✨', W / 2, Y + 110);
 
-    // 輸出成圖片 PNG
     setTimeout(() => {
       const imgData = canvas.toDataURL('image/png');
       const previewImg = document.getElementById('previewImg');
@@ -1159,7 +1113,7 @@
               </div>
               ${blocksHtml}
               <div class="action-btn-group">
-                <button class="btn-image" onclick="downloadBuyerImageCanvas('${buyerName}')">
+                <button class="btn-image" onclick="downloadCanvasDirect('${buyerName}')">
                   📷 下載對帳圖片
                 </button>
               </div>
