@@ -302,7 +302,7 @@
               <option value="merch">🛍️ 商品</option>
               <option value="custom">🌸 自訂價</option>
               <option value="gachapon">🎰 扭蛋</option>
-              <option value="ichiban">🎟️️ 一番賞</option>
+              <option value="ichiban">🎟️ 一番賞</option>
             </select>
           </div>
 
@@ -340,7 +340,7 @@
 
           <div class="form-group" id="cardInputBlock" style="margin-bottom:0;">
             <label>實際刷卡總台幣 (未含1.5%手續費)</label>
-            <input type="number" id="cardTwdInput" placeholder="直接輸入刷卡簡訊台幣" oninput="calcPrice('')">
+            <input type="number" id="cardTwdInput" placeholder="請輸入簡訊刷卡台幣金額" oninput="calcPrice('')">
           </div>
 
           <div class="form-group" id="cashInputBlock" style="display:none; margin-bottom:0;">
@@ -504,7 +504,7 @@
 
       <div class="form-group" id="m_cardInputBlock" style="margin-bottom:0;">
         <label>實際刷卡總台幣 (未含1.5%手續費)</label>
-        <input type="number" id="m_cardTwdInput" oninput="calcPrice('m_')">
+        <input type="number" id="m_cardTwdInput" placeholder="請輸入簡訊刷卡台幣金額" oninput="calcPrice('m_')">
       </div>
 
       <div class="form-group" id="m_cashInputBlock" style="display:none; margin-bottom:0;">
@@ -644,15 +644,12 @@
 
     const twd = (baseSingleTwd * qty) + extraFee;
 
-    // 成本計算 (不隨數量倍增，直接採用用戶輸入的總刷卡或總日幣投入)
+    // 成本計算：刷卡時維持完全空白，必須手動輸入才算成本
     let costTwd = 0;
     if (payMethod === 'card') {
       const cardInput = document.getElementById(prefix + 'cardTwdInput');
-      if (!cardInput.value && totalJpy > 0) {
-        cardInput.placeholder = Math.round(totalJpy * 0.2);
-      }
-      const rawCardTwd = Number(cardInput.value) || Math.round(totalJpy * 0.2);
-      costTwd = Math.ceil(rawCardTwd * 1.015);
+      const rawCardTwd = Number(cardInput.value) || 0;
+      costTwd = rawCardTwd > 0 ? Math.ceil(rawCardTwd * 1.015) : 0;
     } else {
       costTwd = Math.ceil(totalJpy * 0.2);
     }
