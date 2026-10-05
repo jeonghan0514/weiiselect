@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>微物所 weii select｜日本連線代購 v3.6</title>
+  <title>微物所 weii select｜日本連線代購 v3.7</title>
 
   <!-- iOS 主畫面圖示最佳化設定 -->
   <link rel="apple-touch-icon" id="appleIcon" href="logo.jpg">
@@ -864,8 +864,8 @@
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth <= 768);
   }
 
-  // 🎨 v3.6：拿掉「買家：」，換成溫馨的 🎁 小禮物圖示
-  window.downloadCanvasDirect_v3_6 = function(buyerName) {
+  // 🎨 v3.7：🛒 圖示 + 完美對齊的金額右側基準線 (W - 55)
+  window.downloadCanvasDirect_v3_7 = function(buyerName) {
     const isMobile = isMobileDevice();
 
     if (isMobile) {
@@ -889,6 +889,7 @@
     const W = 1000;
     const header_h = 105;
     const banner_bar_h = 8;
+    const right_margin = 55; // 統一右側對齊基準線！
 
     const buyer_padding_top = 40;
     const buyer_text_h = 45;
@@ -941,17 +942,17 @@
     ctx.textBaseline = 'top';
     ctx.fillText('✨ 微物所 weii select ｜ 10/4-10/10日本連線', W / 2, 33);
 
-    // 3. 買家資訊列：改成 🎁 且只顯示名字，溫暖度滿分！
+    // 3. 買家資訊列：🛒 + 完美右側對齊
     const y_buyer = header_h + banner_bar_h + buyer_padding_top;
     ctx.textAlign = 'left';
     ctx.fillStyle = '#1A252C';
     ctx.font = 'bold 38px "Noto Sans TC", sans-serif';
-    ctx.fillText(`🎁 ${buyerName}`, 45, y_buyer);
+    ctx.fillText(`🛒 ${buyerName}`, 45, y_buyer);
 
     ctx.textAlign = 'right';
     ctx.fillStyle = '#E53935';
     ctx.font = 'bold 38px "Noto Sans TC", sans-serif';
-    ctx.fillText(`總計 NT$ ${formatMoney(grandTotal)}`, W - 45, y_buyer);
+    ctx.fillText(`總計 NT$ ${formatMoney(grandTotal)}`, W - right_margin, y_buyer);
 
     // 4. 粗黃虛線
     ctx.strokeStyle = '#FFE082';
@@ -985,16 +986,18 @@
 
       let innerY = y_card + cat_padding_top;
       
+      // 分類小計：右側對齊 W - right_margin
       ctx.textAlign = 'left';
       ctx.fillStyle = '#7F8C8D';
       ctx.font = 'bold 34px "Noto Sans TC", sans-serif';
       ctx.fillText(`${tInfo.icon} ${tInfo.name} (${list.length}筆)`, 85, innerY);
 
       ctx.textAlign = 'right';
-      ctx.fillText(`小計 NT$ ${formatMoney(catTotal)}`, W - 85, innerY);
+      ctx.fillText(`小計 NT$ ${formatMoney(catTotal)}`, W - right_margin, innerY);
 
       innerY += 34 + gap_title_to_item;
 
+      // 細項金額：右側對齊 W - right_margin，與上方完全對齊
       list.forEach(item => {
         const qtyStr = (item.qty && item.qty > 1) ? ` x ${item.qty}` : '';
         const extraStr = item.extraFee ? ` (含加價$${formatMoney(item.extraFee)})` : '';
@@ -1006,7 +1009,7 @@
 
         ctx.textAlign = 'right';
         ctx.font = 'bold 28px "Noto Sans TC", sans-serif';
-        ctx.fillText(`NT$ ${formatMoney(item.priceTwd)}`, W - 85, innerY);
+        ctx.fillText(`NT$ ${formatMoney(item.priceTwd)}`, W - right_margin, innerY);
 
         innerY += item_row_h;
       });
@@ -1053,11 +1056,12 @@
   };
 
   // 舊函式別名綁定
-  window.downloadCanvasDirect_v3_1 = window.downloadCanvasDirect_v3_6;
-  window.downloadCanvasDirect_v3_2 = window.downloadCanvasDirect_v3_6;
-  window.downloadCanvasDirect_v3_3 = window.downloadCanvasDirect_v3_6;
-  window.downloadCanvasDirect_v3_4 = window.downloadCanvasDirect_v3_6;
-  window.downloadCanvasDirect_v3_5 = window.downloadCanvasDirect_v3_6;
+  window.downloadCanvasDirect_v3_1 = window.downloadCanvasDirect_v3_7;
+  window.downloadCanvasDirect_v3_2 = window.downloadCanvasDirect_v3_7;
+  window.downloadCanvasDirect_v3_3 = window.downloadCanvasDirect_v3_7;
+  window.downloadCanvasDirect_v3_4 = window.downloadCanvasDirect_v3_7;
+  window.downloadCanvasDirect_v3_5 = window.downloadCanvasDirect_v3_7;
+  window.downloadCanvasDirect_v3_6 = window.downloadCanvasDirect_v3_7;
 
   window.renderProductList = function() {
     const productList = document.getElementById('productList');
@@ -1198,17 +1202,17 @@
           }
         });
 
-        // 網站端對帳卡片：換成 🎁 且拿掉「買家：」
+        // 網站端對帳卡片：改成 🛒
         summaryHtml += `
           <div class="buyer-summary-wrapper">
             <div class="buyer-summary-card">
               <div class="buyer-header">
-                <span class="buyer-name">🎁 ${buyerName}</span>
+                <span class="buyer-name">🛒 ${buyerName}</span>
                 <span class="buyer-total">總計 NT$ ${formatMoney(group.total)}</span>
               </div>
               ${blocksHtml}
               <div class="action-btn-group">
-                <button class="btn-image" onclick="downloadCanvasDirect_v3_6('${buyerName}')">
+                <button class="btn-image" onclick="downloadCanvasDirect_v3_7('${buyerName}')">
                   📷 下載對帳圖片
                 </button>
               </div>
