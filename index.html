@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>微物所 weii select｜日本連線代購 v2.2</title>
+  <title>微物所 weii select｜日本連線代購 v2.3</title>
 
   <!-- iOS 主畫面圖示最佳化設定 -->
   <link rel="apple-touch-icon" id="appleIcon" href="logo.jpg">
@@ -836,7 +836,7 @@
     }
   };
 
-  // 🎨 精準比例控制：拉開買家與項目行距 + 縮減謝語上下空格
+  // 🎨 精準產圖：標題字加大(42px)、名字取消「買家：」、買家列行距拉寬
   window.downloadCanvasDirect = function(buyerName) {
     document.getElementById('previewTitle').innerText = `📷 ${buyerName} 的對帳單`;
     document.getElementById('previewTip').innerText = `⏳ 正在繪製高清圖片，請稍候...`;
@@ -856,20 +856,19 @@
     });
 
     const W = 1000;
-    const header_h = 120;
+    const header_h = 130;
     const banner_bar_h = 10;
-    const buyer_row_h = 150; // 加大買家與下方卡片行距
+    const buyer_row_h = 170; // 買家列行距加大
 
     let categories_h = 0;
     ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
       const list = grouped[catKey];
       if (list.length > 0) {
-        // 卡片內部：top(35) + title(35) + gap(30) + items(len*65) + bottom(35)
         categories_h += (35 + 35 + 30 + list.length * 65 + 35) + 30;
       }
     });
 
-    const footer_h = 140; // 縮減底部謝語高度（空格變小）
+    const footer_h = 140;
     const H = header_h + banner_bar_h + buyer_row_h + categories_h + footer_h;
 
     const canvas = document.createElement('canvas');
@@ -887,18 +886,19 @@
     ctx.fillStyle = '#FFC107';
     ctx.fillRect(0, 120, W, 10);
 
+    // 頂欄標題文字放大至 42px（與買家名字一樣大）
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 36px "Noto Sans TC", sans-serif';
+    ctx.font = 'bold 42px "Noto Sans TC", sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('✨ 微物所 weii select ｜ 10/4-10/10日本連線', W / 2, 60);
 
-    // 買家資訊列
-    let Y = 170;
+    // 買家資訊列（只顯示名字，取消 "買家：" 前綴）
+    let Y = 175;
     ctx.textAlign = 'left';
     ctx.fillStyle = '#1A252C';
     ctx.font = 'bold 42px "Noto Sans TC", sans-serif';
-    ctx.fillText(`👤 買家：${buyerName}`, 40, Y);
+    ctx.fillText(`👤 ${buyerName}`, 40, Y);
 
     ctx.textAlign = 'right';
     ctx.fillStyle = '#E53935';
@@ -915,7 +915,7 @@
     ctx.stroke();
     ctx.setLineDash([]);
 
-    Y += 50; // 拉大黃色虛線到卡片之間的距離
+    Y += 60; // 黃色虛線到卡片頂部的行距拉寬
 
     // 分類卡片
     ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
@@ -927,7 +927,7 @@
 
         const catPaddingTop = 35;
         const catPaddingBottom = 35;
-        const gapTitleToItem = 30; // 標題與項目的間距
+        const gapTitleToItem = 30;
         const blockHeight = catPaddingTop + 35 + gapTitleToItem + (list.length * 65) + catPaddingBottom;
 
         ctx.fillStyle = '#FAFAFA';
@@ -971,7 +971,7 @@
       }
     });
 
-    // 頁尾感謝謝語（縮減上下留白，不再太空）
+    // 頁尾感謝謝語
     const footerH = H - Y;
     ctx.fillStyle = '#FAF9F6';
     ctx.fillRect(0, Y, W, footerH);
@@ -1141,7 +1141,7 @@
           <div class="buyer-summary-wrapper">
             <div class="buyer-summary-card">
               <div class="buyer-header">
-                <span class="buyer-name">👤 買家：${buyerName}</span>
+                <span class="buyer-name">👤 ${buyerName}</span>
                 <span class="buyer-total">總計 NT$ ${group.total}</span>
               </div>
               ${blocksHtml}
