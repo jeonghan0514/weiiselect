@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>微物所 weii select｜日本連線代購 v2.3</title>
+  <title>微物所 weii select｜日本連線代購 v2.4</title>
 
   <!-- iOS 主畫面圖示最佳化設定 -->
   <link rel="apple-touch-icon" id="appleIcon" href="logo.jpg">
@@ -506,7 +506,7 @@
           <option value="merch">🛍️ 商品</option>
           <option value="custom">🌸 自訂價</option>
           <option value="gachapon">🎰 扭蛋</option>
-          <option value="ichiban">🎟️ 一番賞</option>
+          <option value="ichiban">🎟️️ 一番賞</option>
         </select>
       </div>
 
@@ -836,8 +836,8 @@
     }
   };
 
-  // 🎨 精準產圖：標題字加大(42px)、名字取消「買家：」、買家列行距拉寬
-  window.downloadCanvasDirect = function(buyerName) {
+  // 🎨 全新升級：防快取 v2.4 產圖邏輯
+  window.downloadCanvasDirect_v2_4 = function(buyerName) {
     document.getElementById('previewTitle').innerText = `📷 ${buyerName} 的對帳單`;
     document.getElementById('previewTip').innerText = `⏳ 正在繪製高清圖片，請稍候...`;
     document.getElementById('previewImg').style.display = 'none';
@@ -858,7 +858,7 @@
     const W = 1000;
     const header_h = 130;
     const banner_bar_h = 10;
-    const buyer_row_h = 170; // 買家列行距加大
+    const buyer_row_h = 170; // 買家列垂直間距拉寬
 
     let categories_h = 0;
     ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
@@ -868,7 +868,7 @@
       }
     });
 
-    const footer_h = 140;
+    const footer_h = 140; // 緊湊頁尾
     const H = header_h + banner_bar_h + buyer_row_h + categories_h + footer_h;
 
     const canvas = document.createElement('canvas');
@@ -915,7 +915,7 @@
     ctx.stroke();
     ctx.setLineDash([]);
 
-    Y += 60; // 黃色虛線到卡片頂部的行距拉寬
+    Y += 60; // 黃色虛線與卡片間距拉寬
 
     // 分類卡片
     ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
@@ -1146,7 +1146,7 @@
               </div>
               ${blocksHtml}
               <div class="action-btn-group">
-                <button class="btn-image" onclick="downloadCanvasDirect('${buyerName}')">
+                <button class="btn-image" onclick="downloadCanvasDirect_v2_4('${buyerName}')">
                   📷 下載對帳圖片
                 </button>
               </div>
