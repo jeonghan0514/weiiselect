@@ -279,7 +279,7 @@
     /* Modal 彈出視窗樣式 */
     .modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.6);
       display: flex; align-items: center; justify-content: center;
       z-index: 1000; padding: 12px;
     }
@@ -299,6 +299,17 @@
     .modal-header h3 { margin: 0; font-size: 1.1rem; color: var(--poke-red); }
     .close-modal-btn {
       background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-sub);
+    }
+
+    /* 手機長按儲存圖片 Modal */
+    .img-preview-box {
+      text-align: center;
+    }
+    .img-preview-box img {
+      width: 100%; height: auto; border: 1px solid #DDD; border-radius: 8px; margin-bottom: 10px;
+    }
+    .img-preview-tip {
+      font-size: 0.82rem; color: var(--poke-red); font-weight: bold; margin-bottom: 12px;
     }
   </style>
 </head>
@@ -597,6 +608,21 @@
   </div>
 </div>
 
+<!-- 手機 PWA 專用：圖片預覽彈出視窗 (支援長按儲存/複製) -->
+<div id="imgPreviewModal" class="modal-overlay" style="display: none;">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3 id="previewTitle">📷 對帳單圖片預覽</h3>
+      <button class="close-modal-btn" onclick="closeImgModal()">✕</button>
+    </div>
+    <div class="img-preview-box">
+      <div class="img-preview-tip">👇 長按下方圖片即可「儲存到照片」或「複製」</div>
+      <img id="previewImg" src="" alt="對帳單圖片">
+      <button class="btn-main" onclick="closeImgModal()" style="background:#607D8B; margin-top: 6px;">關閉預覽</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } 
@@ -806,6 +832,10 @@
     document.getElementById('editModal').style.display = 'none';
   };
 
+  window.closeImgModal = function() {
+    document.getElementById('imgPreviewModal').style.display = 'none';
+  };
+
   window.saveModalEdit = async function() {
     if (!editingKey) return;
 
@@ -847,7 +877,7 @@
     }
   };
 
-  // 📷 動態觸發：匯出圖片（含溫暖旅行結語）
+  // 📷 跨平台修復：手機 PWA 模式自動改用圖片彈窗預覽，支援長按儲存
   window.downloadBuyerImage = function(cardId, buyerName) {
     const cardElem = document.getElementById(cardId);
     if (!cardElem) return;
@@ -865,10 +895,21 @@
       cardElem.classList.remove('render-export-style');
       if (btnGroup) btnGroup.style.display = 'block';
 
-      const link = document.createElement('a');
-      link.download = `微物所對帳單_${buyerName}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+      const imgData = canvas.toDataURL('image/png');
+      const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+
+      // 如果是在手機加入主畫面的 PWA 模式或 iOS 裝置，彈出長按儲存視窗
+      if (isStandalone || /iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        document.getElementById('previewTitle').innerText = `📷 ${buyerName} 的對帳單`;
+        document.getElementById('previewImg').src = imgData;
+        document.getElementById('imgPreviewModal').style.display = 'flex';
+      } else {
+        // 電腦版或一般瀏覽器維持自動下載
+        const link = document.createElement('a');
+        link.download = `微物所對帳單_${buyerName}.png`;
+        link.href = imgData;
+        link.click();
+      }
     }).catch(err => {
       cardElem.classList.remove('render-export-style');
       if (btnGroup) btnGroup.style.display = 'block';
