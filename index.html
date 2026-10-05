@@ -12,7 +12,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="微物所">
 
-  <!-- 載入 Google 思源黑體 (確保跨平台字型與粗細完全一致) -->
+  <!-- 載入 Google 思源黑體 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -39,9 +39,6 @@
       img.src = 'logo.jpg';
     })();
   </script>
-
-  <!-- 載入網頁轉圖片套件 (html2canvas) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     :root {
@@ -198,11 +195,6 @@
       border: 1px solid var(--border-color);
       padding: 14px;
       position: relative;
-    }
-    
-    /* 預設隱藏設計元素的 Header & Footer */
-    .bill-brand-header, .bill-footer-thanks {
-      display: none;
     }
 
     .buyer-header {
@@ -575,7 +567,7 @@
   </div>
 </div>
 
-<!-- 手機對帳單圖片彈出視窗 (長按儲存) -->
+<!-- 手機長按儲存圖片 Modal -->
 <div id="imgPreviewModal" class="modal-overlay" style="display: none;">
   <div class="modal-container">
     <div class="modal-header">
@@ -622,10 +614,10 @@
   };
 
   const typeMap = {
-    merch: { name: '商品', icon: '🛍️', catClass: 'cat-merch' },
-    custom: { name: '商品', icon: '🌸', catClass: 'cat-merch' },
-    gachapon: { name: '扭蛋', icon: '🎰', catClass: 'cat-gachapon' },
-    ichiban: { name: '一番賞', icon: '🎟️', catClass: 'cat-ichiban' }
+    merch: { name: '商品', icon: '🛍️', catClass: 'cat-merch', color: '#90CAF9' },
+    custom: { name: '商品', icon: '🌸', catClass: 'cat-merch', color: '#90CAF9' },
+    gachapon: { name: '扭蛋', icon: '🎰', catClass: 'cat-gachapon', color: '#A5D6A7' },
+    ichiban: { name: '一番賞', icon: '🎟️', catClass: 'cat-ichiban', color: '#FFCC80' }
   };
 
   document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
@@ -844,134 +836,179 @@
     }
   };
 
-  // 📷 終極完美相容：引入思源黑體 + 精準 Emoji 隔離，徹底告別 iOS 莫名空格與粗細不一
-  window.downloadBuyerImage = function(cardId, buyerName) {
-    const sourceCard = document.getElementById(cardId);
-    if (!sourceCard) return;
-
+  // 🎨 終極武器：純 HTML5 Canvas 向量原生成圖，完全繞過 html2canvas 與 iOS Safari 排版蟲！
+  window.downloadBuyerImageCanvas = function(buyerName) {
     document.getElementById('previewTitle').innerText = `📷 ${buyerName} 的對帳單`;
-    document.getElementById('previewTip').innerText = `⏳ 正在為您生成圖片，請稍候...`;
+    document.getElementById('previewTip').innerText = `⏳ 正在繪製圖片中...`;
     document.getElementById('previewImg').style.display = 'none';
     document.getElementById('imgPreviewModal').style.display = 'flex';
 
-    // 建立獨立離屏容器 (固定 520px 桌機標準寬度)
-    const offscreenContainer = document.createElement('div');
-    offscreenContainer.style.position = 'absolute';
-    offscreenContainer.style.left = '-9999px';
-    offscreenContainer.style.top = '-9999px';
-    offscreenContainer.style.width = '520px';
-    offscreenContainer.style.backgroundColor = '#FFFFFF';
+    // 取得該買家的資料
+    const buyerItems = currentProducts.filter(p => p.buyer === buyerName);
+    const grouped = { merch: [], gachapon: [], ichiban: [] };
+    let grandTotal = 0;
 
-    // 複製卡片 DOM 內容
-    const clone = sourceCard.cloneNode(true);
+    buyerItems.forEach(it => {
+      let t = it.type || 'merch';
+      if (t === 'custom') t = 'merch';
+      if (grouped[t]) grouped[t].push(it);
+      grandTotal += (it.priceTwd || 0);
+    });
+
+    // 動態計算 Canvas 高度
+    const W = 1000; // 高解析 2x 畫布寬度 (等同 500px 顯示)
+    let currentY = 0;
+
+    // Header: 120px
+    currentY += 120; 
+    // Buyer Info Row: 120px
+    currentY += 120;
+
+    // 各分類區塊動態高度
+    ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
+      const list = grouped[catKey];
+      if (list.length > 0) {
+        currentY += 70; // 分類標題
+        currentY += list.length * 60; // 每筆商品 60px
+        currentY += 30; // 間距
+      }
+    });
+
+    // Footer Thanks: 160px
+    currentY += 160;
+
+    const H = currentY;
+
+    // 建立 Canvas 畫布
+    const canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    // 1. 全局背景白色
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, W, H);
+
+    // 2. 頂欄紅黃 Banner Header
+    ctx.fillStyle = '#E53935';
+    ctx.fillRect(0, 0, W, 110);
+    ctx.fillStyle = '#FFC107';
+    ctx.fillRect(0, 110, W, 10);
+
+    // Banner 文字
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 38px "Noto Sans TC", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('✨ 微物所 weii select ｜ 10/4-10/10日本連線', W / 2, 55);
+
+    // 3. 買家與總計列
+    let Y = 160;
     
-    // 移除按鈕
-    const cloneBtnGroup = clone.querySelector('.action-btn-group');
-    if (cloneBtnGroup) cloneBtnGroup.remove();
+    // 買家姓名 (左)
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#1A252C';
+    ctx.font = 'bold 44px "Noto Sans TC", sans-serif';
+    ctx.fillText(`👤 買家：${buyerName}`, 40, Y);
 
-    // 強制套用思源黑體與標準排版，消除 iOS 排版污染
-    clone.setAttribute('style', `
-      width: 520px !important;
-      padding: 20px !important;
-      background: #FFFFFF !important;
-      border-radius: 0px !important;
-      border: none !important;
-      box-shadow: none !important;
-      font-family: 'Noto Sans TC', sans-serif !important;
-      letter-spacing: 0px !important;
-      word-spacing: 0px !important;
-      text-align: left !important;
-    `);
+    // 總計 (右)
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#E53935';
+    ctx.font = 'bold 44px "Noto Sans TC", sans-serif';
+    ctx.fillText(`總計 NT$ ${grandTotal}`, W - 40, Y);
 
-    // 顯現 Header & Footer 並且極致排版修復
-    const header = clone.querySelector('.bill-brand-header');
-    if (header) {
-      header.setAttribute('style', `
-        display: block !important;
-        background: linear-gradient(135deg, #E53935, #EF5350) !important;
-        color: white !important;
-        text-align: center !important;
-        padding: 14px 10px !important;
-        margin: -20px -20px 16px -20px !important;
-        font-size: 1.05rem !important;
-        font-weight: 700 !important;
-        letter-spacing: 0px !important;
-        word-spacing: 0px !important;
-        font-family: 'Noto Sans TC', sans-serif !important;
-        border-bottom: 4px solid #FFC107 !important;
-      `);
-      header.innerHTML = `<span style="font-size: 1rem;">✨</span> 微物所 weii select ｜ 10/4-10/10日本連線`;
-    }
+    Y += 45;
 
-    const bHeader = clone.querySelector('.buyer-header');
-    if (bHeader) {
-      bHeader.setAttribute('style', `
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        border-bottom: 2px dashed #FFE082 !important;
-        padding-bottom: 10px !important;
-        margin-bottom: 14px !important;
-      `);
-    }
+    // 虛線分隔線
+    ctx.strokeStyle = '#FFE082';
+    ctx.lineWidth = 4;
+    ctx.setLineDash([12, 12]);
+    ctx.beginPath();
+    ctx.moveTo(40, Y);
+    ctx.lineTo(W - 40, Y);
+    ctx.stroke();
+    ctx.setLineDash([]); // 恢復實線
 
-    const bName = clone.querySelector('.buyer-name');
-    if (bName) bName.setAttribute('style', "font-size: 1.1rem !important; font-weight: 700 !important; color: #2C3E50 !important; font-family: 'Noto Sans TC', sans-serif !important;");
+    Y += 50;
 
-    const bTotal = clone.querySelector('.buyer-total');
-    if (bTotal) bTotal.setAttribute('style', "font-size: 1.25rem !important; font-weight: 700 !important; color: #E53935 !important; font-family: 'Noto Sans TC', sans-serif !important;");
+    // 4. 繪製商品分類卡片
+    ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
+      const list = grouped[catKey];
+      if (list.length > 0) {
+        const tInfo = typeMap[catKey];
+        let catTotal = 0;
+        list.forEach(i => catTotal += (i.priceTwd || 0));
 
-    const footer = clone.querySelector('.bill-footer-thanks');
-    if (footer) {
-      footer.setAttribute('style', `
-        display: block !important;
-        text-align: center !important;
-        font-size: 11.5px !important;
-        line-height: 1.5 !important;
-        color: #78909C !important;
-        margin: 16px -20px -20px -20px !important;
-        padding: 12px 10px !important;
-        background: #FAF9F6 !important;
-        border-top: 1px solid #ECEFF1 !important;
-        letter-spacing: 0px !important;
-        word-spacing: -1px !important;
-        font-family: 'Noto Sans TC', sans-serif !important;
-        font-weight: 500 !important;
-      `);
-      footer.innerHTML = `
-        🌸 謝謝大家一路陪著「微物所」一起旅行 ✈️<br>
-        這趟旅程也因為有大家，變得更加有意義 💕✨
-      `;
-    }
+        const blockHeight = 60 + list.length * 60;
 
-    offscreenContainer.appendChild(clone);
-    document.body.appendChild(offscreenContainer);
+        // 圓角灰色底塊
+        ctx.fillStyle = '#FAFAFA';
+        ctx.beginPath();
+        ctx.roundRect(40, Y, W - 80, blockHeight, 20);
+        ctx.fill();
 
+        // 左側邊界顏色條
+        ctx.fillStyle = tInfo.color;
+        ctx.beginPath();
+        ctx.roundRect(40, Y, 12, blockHeight, [20, 0, 0, 20]);
+        ctx.fill();
+
+        // 分類標題
+        let innerY = Y + 42;
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#546E7A';
+        ctx.font = 'bold 34px "Noto Sans TC", sans-serif';
+        ctx.fillText(`${tInfo.icon} ${tInfo.name} (${list.length}筆)`, 70, innerY);
+
+        ctx.textAlign = 'right';
+        ctx.fillText(`小計 NT$ ${catTotal}`, W - 70, innerY);
+
+        // 商品明細列表
+        list.forEach(item => {
+          innerY += 60;
+          const qtyStr = (item.qty && item.qty > 1) ? ` x ${item.qty}` : '';
+          const extraStr = item.extraFee ? ` (含加價$${item.extraFee})` : '';
+
+          ctx.textAlign = 'left';
+          ctx.fillStyle = '#2C3E50';
+          ctx.font = '500 32px "Noto Sans TC", sans-serif';
+          ctx.fillText(`• ${item.title}${qtyStr}${extraStr}`, 90, innerY);
+
+          ctx.textAlign = 'right';
+          ctx.font = 'bold 34px "Noto Sans TC", sans-serif';
+          ctx.fillText(`NT$ ${item.priceTwd}`, W - 70, innerY);
+        });
+
+        Y += blockHeight + 30;
+      }
+    });
+
+    // 5. 底部感謝標語 (灰色背景塊)
+    const footerH = H - Y;
+    ctx.fillStyle = '#FAF9F6';
+    ctx.fillRect(0, Y, W, footerH);
+
+    ctx.strokeStyle = '#ECEFF1';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, Y);
+    ctx.lineTo(W, Y);
+    ctx.stroke();
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#607D8B';
+    ctx.font = '500 30px "Noto Sans TC", sans-serif';
+    ctx.fillText('🌸 謝謝大家一路陪著「微物所」一起旅行 ✈️', W / 2, Y + 55);
+    ctx.fillText('這趟旅程也因為有大家，變得更加有意義 💕✨', W / 2, Y + 110);
+
+    // 輸出成圖片 PNG
     setTimeout(() => {
-      html2canvas(clone, {
-        scale: 3,
-        width: 520,
-        windowWidth: 520,
-        backgroundColor: '#FFFFFF',
-        useCORS: true,
-        allowTaint: true
-      }).then(canvas => {
-        document.body.removeChild(offscreenContainer);
-
-        const imgData = canvas.toDataURL('image/png');
-        const previewImg = document.getElementById('previewImg');
-        previewImg.src = imgData;
-        previewImg.style.display = 'block';
-        document.getElementById('previewTip').innerText = `👇 長按下方圖片即可「儲存到照片」或「複製」`;
-
-      }).catch(err => {
-        if (document.body.contains(offscreenContainer)) {
-          document.body.removeChild(offscreenContainer);
-        }
-        console.error(err);
-        document.getElementById('previewTip').innerText = `❌ 圖片生成失敗，請再試一次！`;
-      });
-    }, 120);
+      const imgData = canvas.toDataURL('image/png');
+      const previewImg = document.getElementById('previewImg');
+      previewImg.src = imgData;
+      previewImg.style.display = 'block';
+      document.getElementById('previewTip').innerText = `👇 長按下方圖片即可「儲存到照片」或「複製」`;
+    }, 100);
   };
 
   window.renderProductList = function() {
@@ -1078,11 +1115,9 @@
       });
 
       let summaryHtml = '';
-      let index = 0;
       Object.keys(buyerMap).forEach(buyerName => {
         const group = buyerMap[buyerName];
         let blocksHtml = '';
-        const cardId = `buyerCard_${index++}`;
 
         ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
           const catItems = group.categories[catKey];
@@ -1117,19 +1152,14 @@
 
         summaryHtml += `
           <div class="buyer-summary-wrapper">
-            <div class="buyer-summary-card" id="${cardId}">
-              <div class="bill-brand-header">✨ 微物所 weii select｜10/4-10/10日本連線</div>
+            <div class="buyer-summary-card">
               <div class="buyer-header">
                 <span class="buyer-name">👤 買家：${buyerName}</span>
                 <span class="buyer-total">總計 NT$ ${group.total}</span>
               </div>
               ${blocksHtml}
-              <div class="bill-footer-thanks">
-                🌸 謝謝大家一路陪著「微物所」一起旅行 ✈️<br>
-                這趟旅程也因為有大家，變得更加有意義 💕✨
-              </div>
               <div class="action-btn-group">
-                <button class="btn-image" onclick="downloadBuyerImage('${cardId}', '${buyerName}')">
+                <button class="btn-image" onclick="downloadBuyerImageCanvas('${buyerName}')">
                   📷 下載對帳圖片
                 </button>
               </div>
