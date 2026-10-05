@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>微物所 weii select｜日本連線代購 v2.6</title>
+  <title>微物所 weii select｜日本連線代購 v3.0</title>
 
   <!-- iOS 主畫面圖示最佳化設定 -->
   <link rel="apple-touch-icon" id="appleIcon" href="logo.jpg">
@@ -836,8 +836,8 @@
     }
   };
 
-  // 🎨 v2.6 精準對稱幾何對齊（Symmetric Alignment）
-  window.downloadCanvasDirect_v2_6 = function(buyerName) {
+  // 🎨 1:1 復原經典排版 (v3.0)
+  window.downloadCanvasDirect_v3_0 = function(buyerName) {
     document.getElementById('previewTitle').innerText = `📷 ${buyerName} 的對帳單`;
     document.getElementById('previewTip').innerText = `⏳ 正在繪製高清圖片，請稍候...`;
     document.getElementById('previewImg').style.display = 'none';
@@ -856,43 +856,38 @@
     });
 
     const W = 1000;
-    const header_h = 130;
-    const banner_bar_h = 10;
-    const header_bottom = header_h + banner_bar_h; // 140px
+    const header_h = 105;
+    const banner_bar_h = 8;
 
-    // 1. 買家欄對稱 (S1 = 60px)
-    const S1 = 60;
-    const buyer_text_y = header_bottom + S1; // 200px
-    const dash_y = buyer_text_y + 45 + S1;   // 305px
+    const buyer_padding_top = 40;
+    const buyer_text_h = 45;
+    const buyer_padding_bottom = 35;
+    const buyer_row_total_h = buyer_padding_top + buyer_text_h + buyer_padding_bottom;
 
-    // 2. 分類細項（商品卡片）對稱 (S2 = 60px)
-    const S2 = 60;
-    const cards_start_y = dash_y + S2;      // 365px
+    const dash_y = header_h + banner_bar_h + buyer_row_total_h;
 
-    const catPaddingTop = 50;
-    const catPaddingBottom = 45;
-    const gapTitleToItem = 40;
-    const itemRowHeight = 75;
-    const cardGap = 35;
+    const card_top_gap = 35;
+    const cat_padding_top = 35;
+    const gap_title_to_item = 25;
+    const item_row_h = 60;
+    const cat_padding_bottom = 35;
 
     let total_cards_h = 0;
     const validCatKeys = ['merch', 'gachapon', 'ichiban'].filter(k => grouped[k].length > 0);
     
     validCatKeys.forEach((catKey, idx) => {
       const list = grouped[catKey];
-      const bh = catPaddingTop + 35 + gapTitleToItem + (list.length * itemRowHeight) + catPaddingBottom;
+      const bh = cat_padding_top + 30 + gap_title_to_item + (list.length * item_row_h) + cat_padding_bottom;
       total_cards_h += bh;
-      if (idx < validCatKeys.length - 1) total_cards_h += cardGap;
+      if (idx < validCatKeys.length - 1) total_cards_h += 30;
     });
 
-    const cards_end_y = cards_start_y + total_cards_h;
-    const footer_start_y = cards_end_y + S2; // 商品卡片底到謝語底為 S2 (對稱上方的虛線到卡片頭 S2)
+    const cards_bottom_gap = 35;
+    const footer_padding_top = 40;
+    const footer_text_h = 80;
+    const footer_padding_bottom = 40;
 
-    // 3. 謝語對稱 (S3 = 50px)
-    const S3 = 50;
-    const f1_y = footer_start_y + S3;
-    const f2_y = f1_y + 45;
-    const H = f2_y + 35 + S3; // 謝語下方的留白 S3 (對稱謝語上方的留白 S3)
+    const H = dash_y + card_top_gap + total_cards_h + cards_bottom_gap + footer_padding_top + footer_text_h + footer_padding_bottom;
 
     const canvas = document.createElement('canvas');
     canvas.width = W;
@@ -903,71 +898,70 @@
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, W, H);
 
-    // 頂欄 Banner
+    // 1. Header Banner
     ctx.fillStyle = '#E53935';
     ctx.fillRect(0, 0, W, header_h);
     ctx.fillStyle = '#FFC107';
-    ctx.fillRect(0, header_h, W, header_bottom);
+    ctx.fillRect(0, header_h, W, header_h + banner_bar_h);
 
-    // 頂欄標題文字
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 42px "Noto Sans TC", sans-serif';
+    ctx.font = 'bold 38px "Noto Sans TC", sans-serif';
     ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('✨ 微物所 weii select ｜ 10/4-10/10日本連線', W / 2, 60);
-
-    // 買家資訊列（文字上距 S1, 下距 S1）
-    ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
+    ctx.fillText('✨ 微物所 weii select ｜ 10/4-10/10日本連線', W / 2, 33);
+
+    // 2. 買家資訊列 (回復標註 "買家：")
+    const y_buyer = header_h + banner_bar_h + buyer_padding_top;
+    ctx.textAlign = 'left';
     ctx.fillStyle = '#1A252C';
-    ctx.font = 'bold 42px "Noto Sans TC", sans-serif';
-    ctx.fillText(`👤 ${buyerName}`, 40, buyer_text_y);
+    ctx.font = 'bold 38px "Noto Sans TC", sans-serif';
+    ctx.fillText(`👤 買家：${buyerName}`, 45, y_buyer);
 
     ctx.textAlign = 'right';
     ctx.fillStyle = '#E53935';
-    ctx.font = 'bold 42px "Noto Sans TC", sans-serif';
-    ctx.fillText(`總計 NT$ ${grandTotal}`, W - 40, buyer_text_y);
+    ctx.font = 'bold 38px "Noto Sans TC", sans-serif';
+    ctx.fillText(`總計 NT$ ${grandTotal}`, W - 45, y_buyer);
 
     // 黃色分隔虛線
     ctx.strokeStyle = '#FFE082';
     ctx.lineWidth = 4;
-    ctx.setLineDash([12, 12]);
+    ctx.setLineDash([12, 8]);
     ctx.beginPath();
-    ctx.moveTo(40, dash_y);
-    ctx.lineTo(W - 40, dash_y);
+    ctx.moveTo(45, dash_y);
+    ctx.lineTo(W - 45, dash_y);
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // 分類卡片（卡片頭距虛線 S2, 卡片底距謝語頂 S2）
-    let y_curr = cards_start_y;
+    // 3. 商品卡片
+    let y_card = dash_y + card_top_gap;
     validCatKeys.forEach(catKey => {
       const list = grouped[catKey];
       const tInfo = typeMap[catKey];
       let catTotal = 0;
       list.forEach(i => catTotal += (i.priceTwd || 0));
 
-      const blockHeight = catPaddingTop + 35 + gapTitleToItem + (list.length * itemRowHeight) + catPaddingBottom;
+      const blockHeight = cat_padding_top + 30 + gap_title_to_item + (list.length * item_row_h) + cat_padding_bottom;
 
       ctx.fillStyle = '#FAFAFA';
       ctx.beginPath();
-      ctx.roundRect(40, y_curr, W - 80, blockHeight, 24);
+      ctx.roundRect(45, y_card, W - 90, blockHeight, 20);
       ctx.fill();
 
       ctx.fillStyle = tInfo.color;
       ctx.beginPath();
-      ctx.roundRect(40, y_curr, 12, blockHeight, [24, 0, 0, 24]);
+      ctx.roundRect(45, y_card, 12, blockHeight, [20, 0, 0, 20]);
       ctx.fill();
 
-      let innerY = y_curr + catPaddingTop;
+      let innerY = y_card + cat_padding_top;
       ctx.textAlign = 'left';
       ctx.fillStyle = '#7F8C8D';
-      ctx.font = 'bold 32px "Noto Sans TC", sans-serif';
-      ctx.fillText(`${tInfo.icon} ${tInfo.name} (${list.length}筆)`, 80, innerY);
+      ctx.font = 'bold 30px "Noto Sans TC", sans-serif';
+      ctx.fillText(`${tInfo.icon} ${tInfo.name} (${list.length}筆)`, 85, innerY);
 
       ctx.textAlign = 'right';
-      ctx.fillText(`小計 NT$ ${catTotal}`, W - 80, innerY);
+      ctx.fillText(`小計 NT$ ${catTotal}`, W - 85, innerY);
 
-      innerY += 35 + gapTitleToItem;
+      innerY += 30 + gap_title_to_item;
 
       list.forEach(item => {
         const qtyStr = (item.qty && item.qty > 1) ? ` x ${item.qty}` : '';
@@ -975,35 +969,36 @@
 
         ctx.textAlign = 'left';
         ctx.fillStyle = '#2C3E50';
-        ctx.font = '500 32px "Noto Sans TC", sans-serif';
-        ctx.fillText(`• ${item.title}${qtyStr}${extraStr}`, 95, innerY);
+        ctx.font = 'bold 30px "Noto Sans TC", sans-serif';
+        ctx.fillText(`• ${item.title}${qtyStr}${extraStr}`, 100, innerY);
 
         ctx.textAlign = 'right';
-        ctx.font = 'bold 34px "Noto Sans TC", sans-serif';
-        ctx.fillText(`NT$ ${item.priceTwd}`, W - 80, innerY);
+        ctx.font = 'bold 32px "Noto Sans TC", sans-serif';
+        ctx.fillText(`NT$ ${item.priceTwd}`, W - 85, innerY);
 
-        innerY += itemRowHeight;
+        innerY += item_row_h;
       });
 
-      y_curr += blockHeight + cardGap;
+      y_card += blockHeight + 30;
     });
 
-    // 頁尾感謝區塊（謝語距卡片底 S3, 距圖片底 S3）
+    // 4. 頁尾感謝區塊
+    const footer_y = dash_y + card_top_gap + total_cards_h + cards_bottom_gap;
     ctx.fillStyle = '#FAF9F6';
-    ctx.fillRect(0, footer_start_y, W, H - footer_start_y);
+    ctx.fillRect(0, footer_y, W, H - footer_y);
 
     ctx.strokeStyle = '#ECEFF1';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(0, footer_start_y);
-    ctx.lineTo(W, footer_start_y);
+    ctx.moveTo(0, footer_y);
+    ctx.lineTo(W, footer_y);
     ctx.stroke();
 
     ctx.textAlign = 'center';
     ctx.fillStyle = '#78909C';
-    ctx.font = '500 28px "Noto Sans TC", sans-serif';
-    ctx.fillText('🌸 謝謝大家一路陪著「微物所」一起旅行 ✈️', W / 2, f1_y);
-    ctx.fillText('這趟旅程也因為有大家，變得更加有意義 💕✨', W / 2, f2_y);
+    ctx.font = '500 26px "Noto Sans TC", sans-serif';
+    ctx.fillText('🌸 謝謝大家一路陪著「微物所」一起旅行 ✈️', W / 2, footer_y + footer_padding_top);
+    ctx.fillText('這趟旅程也因為有大家，變得更加有意義 💕✨', W / 2, footer_y + footer_padding_top + 40);
 
     setTimeout(() => {
       const imgData = canvas.toDataURL('image/png');
@@ -1157,12 +1152,12 @@
           <div class="buyer-summary-wrapper">
             <div class="buyer-summary-card">
               <div class="buyer-header">
-                <span class="buyer-name">👤 ${buyerName}</span>
+                <span class="buyer-name">👤 買家：${buyerName}</span>
                 <span class="buyer-total">總計 NT$ ${group.total}</span>
               </div>
               ${blocksHtml}
               <div class="action-btn-group">
-                <button class="btn-image" onclick="downloadCanvasDirect_v2_6('${buyerName}')">
+                <button class="btn-image" onclick="downloadCanvasDirect_v3_0('${buyerName}')">
                   📷 下載對帳圖片
                 </button>
               </div>
