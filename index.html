@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>微物所 weii select｜日本連線代購 v3.8</title>
+  <title>微物所 weii select｜日本連線代購 v3.9</title>
 
   <!-- iOS 主畫面圖示最佳化設定 -->
   <link rel="apple-touch-icon" id="appleIcon" href="logo.jpg">
@@ -187,7 +187,7 @@
     .btn-edit { background: #ECEFF1; color: #546E7A; border: none; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
     .btn-delete { background: #FFEBEE; color: #C62828; border: none; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
 
-    /* 網頁上呈現：對帳卡片樣式（完美對齊配置） */
+    /* 網頁上呈現：對帳卡片樣式（強制使用 Grid 網格對齊上下所有金額） */
     .buyer-summary-wrapper { margin-bottom: 12px; }
     .buyer-summary-card {
       background: var(--card-bg);
@@ -197,14 +197,18 @@
       position: relative;
     }
 
+    /* 標頭：改用 Grid 網格與下方內文對齊 */
     .buyer-header {
-      display: flex; justify-content: space-between; align-items: center;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
       border-bottom: 2px dashed #FFE082 !important;
       padding-bottom: 8px; margin-bottom: 12px;
       background: #FFFFFF !important;
     }
     .buyer-name { font-size: 1rem; font-weight: bold; color: var(--text-main); }
-    .buyer-total { font-size: 1.1rem; font-weight: bold; color: var(--poke-red); }
+    .buyer-total { font-size: 1.1rem; font-weight: bold; color: var(--poke-red); text-align: right; font-variant-numeric: tabular-nums; }
 
     .category-block {
       background: #FAFAFA;
@@ -217,18 +221,23 @@
     .category-block.cat-gachapon { border-left-color: #A5D6A7; }
     .category-block.cat-ichiban { border-left-color: #FFCC80; }
 
-    /* 網頁端分類標題與小計排版 (使用 Flex 左右對齊) */
+    /* 分類標題與小計：同樣改用 Grid 網格對齊金額 */
     .category-title { 
       font-size: 0.95rem; 
       font-weight: bold; 
       color: var(--text-sub); 
       margin-bottom: 6px; 
-      display: flex; 
-      justify-content: space-between; 
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
       align-items: center;
     }
+    .category-title span:last-child {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
     
-    /* 網頁端細項：使用 Grid 讓品名與金額完美垂直對齊！ */
+    /* 細項商品：使用 Grid 讓品名與金額完美垂直對齊！ */
     .category-item { 
       font-size: 0.82rem; 
       color: var(--text-main); 
@@ -247,7 +256,7 @@
       font-weight: 600;
       color: var(--text-main);
       text-align: right;
-      font-variant-numeric: tabular-nums; /* 等寬數字對齊 */
+      font-variant-numeric: tabular-nums;
     }
 
     .action-btn-group { margin-top: 10px; }
@@ -876,8 +885,8 @@
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth <= 768);
   }
 
-  // 🎨 v3.8：圖片對帳單繪製
-  window.downloadCanvasDirect_v3_8 = function(buyerName) {
+  // 🎨 v3.9：圖片對帳單繪製
+  window.downloadCanvasDirect_v3_9 = function(buyerName) {
     const isMobile = isMobileDevice();
 
     if (isMobile) {
@@ -1066,13 +1075,14 @@
   };
 
   // 舊函式別名綁定
-  window.downloadCanvasDirect_v3_1 = window.downloadCanvasDirect_v3_8;
-  window.downloadCanvasDirect_v3_2 = window.downloadCanvasDirect_v3_8;
-  window.downloadCanvasDirect_v3_3 = window.downloadCanvasDirect_v3_8;
-  window.downloadCanvasDirect_v3_4 = window.downloadCanvasDirect_v3_8;
-  window.downloadCanvasDirect_v3_5 = window.downloadCanvasDirect_v3_8;
-  window.downloadCanvasDirect_v3_6 = window.downloadCanvasDirect_v3_8;
-  window.downloadCanvasDirect_v3_7 = window.downloadCanvasDirect_v3_8;
+  window.downloadCanvasDirect_v3_1 = window.downloadCanvasDirect_v3_9;
+  window.downloadCanvasDirect_v3_2 = window.downloadCanvasDirect_v3_9;
+  window.downloadCanvasDirect_v3_3 = window.downloadCanvasDirect_v3_9;
+  window.downloadCanvasDirect_v3_4 = window.downloadCanvasDirect_v3_9;
+  window.downloadCanvasDirect_v3_5 = window.downloadCanvasDirect_v3_9;
+  window.downloadCanvasDirect_v3_6 = window.downloadCanvasDirect_v3_9;
+  window.downloadCanvasDirect_v3_7 = window.downloadCanvasDirect_v3_9;
+  window.downloadCanvasDirect_v3_8 = window.downloadCanvasDirect_v3_9;
 
   window.renderProductList = function() {
     const productList = document.getElementById('productList');
@@ -1213,7 +1223,7 @@
           }
         });
 
-        // 網站端對帳卡片：網頁金額對齊
+        // 網站端對帳卡片：標頭改成 Grid 網格，總計金額與下方內文完美對齊！
         summaryHtml += `
           <div class="buyer-summary-wrapper">
             <div class="buyer-summary-card">
@@ -1223,7 +1233,7 @@
               </div>
               ${blocksHtml}
               <div class="action-btn-group">
-                <button class="btn-image" onclick="downloadCanvasDirect_v3_8('${buyerName}')">
+                <button class="btn-image" onclick="downloadCanvasDirect_v3_9('${buyerName}')">
                   📷 下載對帳圖片
                 </button>
               </div>
