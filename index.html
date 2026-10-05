@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>微物所 weii select｜日本連線代購 v3.11</title>
+  <title>微物所 weii select｜日本連線代購 v3.12</title>
 
   <!-- iOS 主畫面圖示最佳化設定 -->
   <link rel="apple-touch-icon" id="appleIcon" href="logo.jpg">
@@ -187,7 +187,7 @@
     .btn-edit { background: #ECEFF1; color: #546E7A; border: none; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
     .btn-delete { background: #FFEBEE; color: #C62828; border: none; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
 
-    /* 網頁上呈現：對帳卡片樣式（簡單舒服的靠右對齊） */
+    /* 網頁上呈現：對帳卡片樣式（總計與底下小計、細項金額對齊同一條垂直線） */
     .buyer-summary-wrapper { margin-bottom: 12px; }
     .buyer-summary-card {
       background: var(--card-bg);
@@ -197,11 +197,11 @@
       position: relative;
     }
 
-    /* 總計列：簡單左右對齊，金額靠右 */
+    /* 總計列：加上左右內距，讓「總計金額」跟底下的「小計金額」右邊緣完全對齊 */
     .buyer-header {
       display: flex; justify-content: space-between; align-items: center;
       border-bottom: 2px dashed #FFE082 !important;
-      padding-bottom: 8px; margin-bottom: 12px;
+      padding: 0 12px 8px 12px; margin-bottom: 12px;
       background: #FFFFFF !important;
     }
     .buyer-name { font-size: 1rem; font-weight: bold; color: var(--text-main); }
@@ -876,8 +876,8 @@
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth <= 768);
   }
 
-  // 🎨 v3.11：圖片對帳單繪製
-  window.downloadCanvasDirect_v3_11 = function(buyerName) {
+  // 🎨 v3.12：圖片對帳單繪製
+  window.downloadCanvasDirect_v3_12 = function(buyerName) {
     const isMobile = isMobileDevice();
 
     if (isMobile) {
@@ -1066,16 +1066,17 @@
   };
 
   // 舊函式別名綁定
-  window.downloadCanvasDirect_v3_1 = window.downloadCanvasDirect_v3_11;
-  window.downloadCanvasDirect_v3_2 = window.downloadCanvasDirect_v3_11;
-  window.downloadCanvasDirect_v3_3 = window.downloadCanvasDirect_v3_11;
-  window.downloadCanvasDirect_v3_4 = window.downloadCanvasDirect_v3_11;
-  window.downloadCanvasDirect_v3_5 = window.downloadCanvasDirect_v3_11;
-  window.downloadCanvasDirect_v3_6 = window.downloadCanvasDirect_v3_11;
-  window.downloadCanvasDirect_v3_7 = window.downloadCanvasDirect_v3_11;
-  window.downloadCanvasDirect_v3_8 = window.downloadCanvasDirect_v3_11;
-  window.downloadCanvasDirect_v3_9 = window.downloadCanvasDirect_v3_11;
-  window.downloadCanvasDirect_v3_10 = window.downloadCanvasDirect_v3_11;
+  window.downloadCanvasDirect_v3_1 = window.downloadCanvasDirect_v3_12;
+  window.downloadCanvasDirect_v3_2 = window.downloadCanvasDirect_v3_12;
+  window.downloadCanvasDirect_v3_3 = window.downloadCanvasDirect_v3_12;
+  window.downloadCanvasDirect_v3_4 = window.downloadCanvasDirect_v3_12;
+  window.downloadCanvasDirect_v3_5 = window.downloadCanvasDirect_v3_12;
+  window.downloadCanvasDirect_v3_6 = window.downloadCanvasDirect_v3_12;
+  window.downloadCanvasDirect_v3_7 = window.downloadCanvasDirect_v3_12;
+  window.downloadCanvasDirect_v3_8 = window.downloadCanvasDirect_v3_12;
+  window.downloadCanvasDirect_v3_9 = window.downloadCanvasDirect_v3_12;
+  window.downloadCanvasDirect_v3_10 = window.downloadCanvasDirect_v3_12;
+  window.downloadCanvasDirect_v3_11 = window.downloadCanvasDirect_v3_12;
 
   window.renderProductList = function() {
     const productList = document.getElementById('productList');
@@ -1216,7 +1217,7 @@
           }
         });
 
-        // 網站端對帳卡片：簡單的左右對齊，與圖片一致
+        // 網站端對帳卡片：讓頂部總計金額完美與下方金額對齊同一條垂直線
         summaryHtml += `
           <div class="buyer-summary-wrapper">
             <div class="buyer-summary-card">
@@ -1226,7 +1227,7 @@
               </div>
               ${blocksHtml}
               <div class="action-btn-group">
-                <button class="btn-image" onclick="downloadCanvasDirect_v3_11('${buyerName}')">
+                <button class="btn-image" onclick="downloadCanvasDirect_v3_12('${buyerName}')">
                   📷 下載對帳圖片
                 </button>
               </div>
