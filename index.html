@@ -226,48 +226,6 @@
       cursor: pointer;
     }
 
-    /* 🎨 導出圖片專用：固定 480px 桌機標準寬度，確保跨平台完全一致 */
-    .render-export-style {
-      width: 480px !important;
-      min-width: 480px !important;
-      max-width: 480px !important;
-      padding: 18px !important;
-      border-radius: 0px !important;
-      border: none !important;
-      box-shadow: none !important;
-      background: #FFFFFF !important;
-    }
-    .render-export-style .bill-brand-header {
-      display: block !important;
-      background: linear-gradient(135deg, var(--poke-red), #EF5350) !important;
-      color: white !important;
-      text-align: center !important;
-      padding: 12px 8px !important;
-      margin: -18px -18px 14px -18px !important;
-      font-size: 0.95rem !important;
-      font-weight: bold !important;
-      letter-spacing: 0.5px !important;
-      border-bottom: 3px solid var(--poke-yellow) !important;
-    }
-    .render-export-style .buyer-header {
-      border-bottom: 2px dashed #FFE082 !important;
-      padding-bottom: 8px !important;
-      margin-bottom: 12px !important;
-    }
-    .render-export-style .buyer-name { font-size: 1.05rem !important; font-weight: 800 !important; color: #2C3E50 !important; }
-    .render-export-style .buyer-total { font-size: 1.2rem !important; font-weight: 800 !important; }
-    .render-export-style .bill-footer-thanks {
-      display: block !important;
-      text-align: center !important;
-      font-size: 0.75rem !important;
-      line-height: 1.5 !important;
-      color: #78909C !important;
-      margin: 12px -18px -18px -18px !important;
-      padding: 12px 8px !important;
-      background: #FAF9F6 !important;
-      border-top: 1px solid #ECEFF1 !important;
-    }
-
     /* 統計區 */
     .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
     .stat-box { background: #FAFAFA; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; text-align: center; }
@@ -880,47 +838,125 @@
     }
   };
 
-  // 📷 跨裝置一致修復：強制設定視窗渲染寬度為 480px，手機截圖完全比照電腦版
+  // 📷 終極修復：建立獨立離屏 Canvas 容器，完全排除 iOS Safari 排版與字距干擾
   window.downloadBuyerImage = function(cardId, buyerName) {
-    const cardElem = document.getElementById(cardId);
-    if (!cardElem) return;
+    const sourceCard = document.getElementById(cardId);
+    if (!sourceCard) return;
 
     document.getElementById('previewTitle').innerText = `📷 ${buyerName} 的對帳單`;
     document.getElementById('previewTip').innerText = `⏳ 正在為您生成圖片，請稍候...`;
     document.getElementById('previewImg').style.display = 'none';
     document.getElementById('imgPreviewModal').style.display = 'flex';
 
-    const btnGroup = cardElem.querySelector('.action-btn-group');
-    if (btnGroup) btnGroup.style.display = 'none';
+    // 建立獨立離屏容器（固定 500px 桌機標準寬度）
+    const offscreenContainer = document.createElement('div');
+    offscreenContainer.style.position = 'absolute';
+    offscreenContainer.style.left = '-9999px';
+    offscreenContainer.style.top = '-9999px';
+    offscreenContainer.style.width = '500px';
+    offscreenContainer.style.backgroundColor = '#FFFFFF';
 
-    cardElem.classList.add('render-export-style');
+    // 複製卡片 DOM 內容
+    const clone = sourceCard.cloneNode(true);
+    
+    // 移除按鈕
+    const cloneBtnGroup = clone.querySelector('.action-btn-group');
+    if (cloneBtnGroup) cloneBtnGroup.remove();
+
+    // 注入全桌機標準內聯樣式，嚴格修復字距與對齊問題
+    clone.setAttribute('style', `
+      width: 500px !important;
+      padding: 20px !important;
+      background: #FFFFFF !important;
+      border-radius: 0px !important;
+      border: none !important;
+      box-shadow: none !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+      letter-spacing: normal !important;
+      word-spacing: normal !important;
+      text-align: left !important;
+    `);
+
+    // 顯現 Header & Footer
+    const header = clone.querySelector('.bill-brand-header');
+    if (header) {
+      header.setAttribute('style', `
+        display: block !important;
+        background: linear-gradient(135deg, #E53935, #EF5350) !important;
+        color: white !important;
+        text-align: center !important;
+        padding: 14px 10px !important;
+        margin: -20px -20px 16px -20px !important;
+        font-size: 1.05rem !important;
+        font-weight: bold !important;
+        letter-spacing: 0px !important;
+        border-bottom: 4px solid #FFC107 !important;
+      `);
+    }
+
+    const bHeader = clone.querySelector('.buyer-header');
+    if (bHeader) {
+      bHeader.setAttribute('style', `
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        border-bottom: 2px dashed #FFE082 !important;
+        padding-bottom: 8px !important;
+        margin-bottom: 14px !important;
+      `);
+    }
+
+    const bName = clone.querySelector('.buyer-name');
+    if (bName) bName.setAttribute('style', 'font-size: 1.1rem !important; font-weight: 800 !important; color: #2C3E50 !important;');
+
+    const bTotal = clone.querySelector('.buyer-total');
+    if (bTotal) bTotal.setAttribute('style', 'font-size: 1.25rem !important; font-weight: 800 !important; color: #E53935 !important;');
+
+    const footer = clone.querySelector('.bill-footer-thanks');
+    if (footer) {
+      footer.setAttribute('style', `
+        display: block !important;
+        text-align: center !important;
+        font-size: 0.8rem !important;
+        line-height: 1.6 !important;
+        color: #78909C !important;
+        margin: 16px -20px -20px -20px !important;
+        padding: 12px 10px !important;
+        background: #FAF9F6 !important;
+        border-top: 1px solid #ECEFF1 !important;
+        letter-spacing: 0px !important;
+        word-spacing: 0px !important;
+      `);
+    }
+
+    offscreenContainer.appendChild(clone);
+    document.body.appendChild(offscreenContainer);
 
     setTimeout(() => {
-      html2canvas(cardElem, {
+      html2canvas(clone, {
         scale: 3,
-        width: 480, // 強制固定寬度 480px，絕不因手機寬度太窄而擠壓
-        windowWidth: 480,
+        width: 500,
+        windowWidth: 500,
         backgroundColor: '#FFFFFF',
         useCORS: true,
         allowTaint: true
       }).then(canvas => {
-        cardElem.classList.remove('render-export-style');
-        if (btnGroup) btnGroup.style.display = 'block';
+        document.body.removeChild(offscreenContainer);
 
         const imgData = canvas.toDataURL('image/png');
-        
         const previewImg = document.getElementById('previewImg');
         previewImg.src = imgData;
         previewImg.style.display = 'block';
         document.getElementById('previewTip').innerText = `👇 長按下方圖片即可「儲存到照片」或「複製」`;
 
       }).catch(err => {
-        cardElem.classList.remove('render-export-style');
-        if (btnGroup) btnGroup.style.display = 'block';
+        if (document.body.contains(offscreenContainer)) {
+          document.body.removeChild(offscreenContainer);
+        }
         console.error(err);
         document.getElementById('previewTip').innerText = `❌ 圖片生成失敗，請再試一次！`;
       });
-    }, 60);
+    }, 80);
   };
 
   window.renderProductList = function() {
