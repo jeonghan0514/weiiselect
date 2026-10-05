@@ -12,7 +12,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="微物所">
 
-  <!-- 自動修復 iOS Safari JPG 圖示無效問題 -->
+  <!-- 自動修復 iOS Safari JPG 圖示問題 -->
   <script>
     (function() {
       var img = new Image();
@@ -125,6 +125,7 @@
     
     .date-row { display: grid; grid-template-columns: 1.8fr 1fr; gap: 8px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .price-qty-row { display: grid; grid-template-columns: 1fr 1.2fr 0.8fr; gap: 6px; }
 
     /* 快捷標籤 */
     .quick-buyer-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
@@ -293,26 +294,32 @@
           <input type="text" id="title" placeholder="例如：吉伊卡哇娃娃">
         </div>
 
-        <div class="form-row">
+        <!-- 整合：計價模式 + 單價 + 數量 -->
+        <div class="price-qty-row">
           <div class="form-group">
             <label>計價模式</label>
             <select id="type" onchange="onTypeChange('')">
-              <option value="merch">🛍️ 商品 (0.27)</option>
-              <option value="custom">🌸 商品 (自訂價)</option>
-              <option value="gachapon">🎰 扭蛋 (固定對照表)</option>
-              <option value="ichiban">🎟️ 一番賞 (0.27)</option>
+              <option value="merch">🛍️ 商品</option>
+              <option value="custom">🌸 自訂價</option>
+              <option value="gachapon">🎰 扭蛋</option>
+              <option value="ichiban">🎟️️ 一番賞</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label>日幣標價 (¥)</label>
-            <input type="number" id="priceJpy" placeholder="500" oninput="calcPrice('')">
+            <label>單個日幣 (¥)</label>
+            <input type="number" id="priceJpy" placeholder="300" oninput="calcPrice('')">
+          </div>
+
+          <div class="form-group">
+            <label>數量</label>
+            <input type="number" id="qty" value="1" min="1" oninput="calcPrice('')">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group" id="customPriceGroup" style="display: none;">
-            <label>自訂台幣售價 (NT$)</label>
+            <label>自訂單個台幣 (NT$)</label>
             <input type="number" id="customTwd" placeholder="例如：250" oninput="calcPrice('')">
           </div>
 
@@ -332,8 +339,8 @@
           </div>
 
           <div class="form-group" id="cardInputBlock" style="margin-bottom:0;">
-            <label>刷卡台幣 (未含1.5%手續費)</label>
-            <input type="number" id="cardTwdInput" placeholder="例如：300" oninput="calcPrice('')">
+            <label>實際刷卡總台幣 (未含1.5%手續費)</label>
+            <input type="number" id="cardTwdInput" placeholder="直接輸入刷卡簡訊台幣" oninput="calcPrice('')">
           </div>
 
           <div class="form-group" id="cashInputBlock" style="display:none; margin-bottom:0;">
@@ -452,26 +459,31 @@
       <input type="text" id="m_title">
     </div>
 
-    <div class="form-row">
+    <div class="price-qty-row">
       <div class="form-group">
         <label>計價模式</label>
         <select id="m_type" onchange="onTypeChange('m_')">
-          <option value="merch">🛍️ 商品 (0.27)</option>
-          <option value="custom">🌸 商品 (自訂價)</option>
-          <option value="gachapon">🎰 扭蛋 (固定對照表)</option>
-          <option value="ichiban">🎟️ 一番賞 (0.27)</option>
+          <option value="merch">🛍️ 商品</option>
+          <option value="custom">🌸 自訂價</option>
+          <option value="gachapon">🎰 扭蛋</option>
+          <option value="ichiban">🎟️ 一番賞</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>日幣標價 (¥)</label>
+        <label>單個日幣 (¥)</label>
         <input type="number" id="m_priceJpy" oninput="calcPrice('m_')">
+      </div>
+
+      <div class="form-group">
+        <label>數量</label>
+        <input type="number" id="m_qty" min="1" oninput="calcPrice('m_')">
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group" id="m_customPriceGroup" style="display: none;">
-        <label>自訂台幣售價 (NT$)</label>
+        <label>自訂單個台幣 (NT$)</label>
         <input type="number" id="m_customTwd" oninput="calcPrice('m_')">
       </div>
 
@@ -486,12 +498,12 @@
         <label>付款方式</label>
         <select id="m_payMethod" onchange="onPayMethodChange('m_')">
           <option value="card">💳 海外刷卡 (台幣+1.5%手續費)</option>
-          <option value="cash">💴 現金 / 扭蛋 (汇率 0.2)</option>
+          <option value="cash">💴 現金 / 扭蛋 (匯率 0.2)</option>
         </select>
       </div>
 
       <div class="form-group" id="m_cardInputBlock" style="margin-bottom:0;">
-        <label>刷卡台幣 (未含1.5%手續費)</label>
+        <label>實際刷卡總台幣 (未含1.5%手續費)</label>
         <input type="number" id="m_cardTwdInput" oninput="calcPrice('m_')">
       </div>
 
@@ -613,31 +625,36 @@
 
   window.calcPrice = function(prefix = '') {
     const type = document.getElementById(prefix + 'type').value;
-    const jpy = Number(document.getElementById(prefix + 'priceJpy').value) || 0;
+    const singleJpy = Number(document.getElementById(prefix + 'priceJpy').value) || 0;
+    const qty = Math.max(1, Number(document.getElementById(prefix + 'qty').value) || 1);
     const extraFee = Number(document.getElementById(prefix + 'extraFee').value) || 0;
     const payMethod = document.getElementById(prefix + 'payMethod').value;
 
-    let baseTwd = 0;
+    const totalJpy = singleJpy * qty;
+
+    // 售價計算 (單價 x 數量 + 加價)
+    let baseSingleTwd = 0;
     if (type === 'gachapon') {
-      baseTwd = gachaponTable[jpy] || Math.ceil(jpy * 0.27);
+      baseSingleTwd = gachaponTable[singleJpy] || Math.ceil(singleJpy * 0.27);
     } else if (type === 'custom') {
-      baseTwd = Number(document.getElementById(prefix + 'customTwd').value) || 0;
+      baseSingleTwd = Number(document.getElementById(prefix + 'customTwd').value) || 0;
     } else {
-      baseTwd = Math.ceil(jpy * 0.27);
+      baseSingleTwd = Math.ceil(singleJpy * 0.27);
     }
 
-    const twd = baseTwd + extraFee;
+    const twd = (baseSingleTwd * qty) + extraFee;
 
+    // 成本計算 (不隨數量倍增，直接採用用戶輸入的總刷卡或總日幣投入)
     let costTwd = 0;
     if (payMethod === 'card') {
       const cardInput = document.getElementById(prefix + 'cardTwdInput');
-      if (!cardInput.value && jpy > 0) {
-        cardInput.placeholder = Math.round(jpy * 0.2);
+      if (!cardInput.value && totalJpy > 0) {
+        cardInput.placeholder = Math.round(totalJpy * 0.2);
       }
-      const rawCardTwd = Number(cardInput.value) || Math.round(jpy * 0.2);
+      const rawCardTwd = Number(cardInput.value) || Math.round(totalJpy * 0.2);
       costTwd = Math.ceil(rawCardTwd * 1.015);
     } else {
-      costTwd = Math.ceil(jpy * 0.2);
+      costTwd = Math.ceil(totalJpy * 0.2);
     }
 
     const profitTwd = twd - costTwd;
@@ -646,7 +663,7 @@
     document.getElementById(prefix + 'costTwd').innerText = `NT$ ${costTwd}`;
     document.getElementById(prefix + 'profitTwd').innerText = `NT$ ${profitTwd}`;
 
-    return { twd, costTwd, profitTwd, extraFee };
+    return { twd, costTwd, profitTwd, extraFee, qty, singleJpy, baseSingleTwd };
   };
 
   window.submitProduct = async function() {
@@ -655,11 +672,12 @@
     const buyer = document.getElementById('buyer').value.trim();
     const title = document.getElementById('title').value.trim();
     const priceJpy = Number(document.getElementById('priceJpy').value) || 0;
+    const qty = Math.max(1, Number(document.getElementById('qty').value) || 1);
     const type = document.getElementById('type').value;
     const payMethod = document.getElementById('payMethod').value;
     const cardTwdInput = document.getElementById('cardTwdInput').value;
     const customTwd = document.getElementById('customTwd').value;
-    const { twd, costTwd, profitTwd, extraFee } = window.calcPrice('');
+    const { twd, costTwd, profitTwd, extraFee, baseSingleTwd } = window.calcPrice('');
 
     if (!buyer || !title) {
       alert('請填寫「購買人」與「商品名稱」！');
@@ -671,14 +689,15 @@
 
     try {
       await push(productsRef, {
-        purchaseDate, payer, buyer, title, type, priceJpy, payMethod, extraFee,
-        cardTwdInput, customTwd,
+        purchaseDate, payer, buyer, title, type, priceJpy, qty, payMethod, extraFee,
+        cardTwdInput, customTwd, baseSingleTwd,
         priceTwd: twd, costTwd: costTwd, profitTwd: profitTwd,
         createdAt: Date.now()
       });
 
       document.getElementById('title').value = '';
       document.getElementById('priceJpy').value = '';
+      document.getElementById('qty').value = '1';
       document.getElementById('customTwd').value = '';
       document.getElementById('extraFee').value = '';
       document.getElementById('cardTwdInput').value = '';
@@ -704,6 +723,7 @@
     document.getElementById('m_title').value = item.title || '';
     document.getElementById('m_type').value = item.type || 'merch';
     document.getElementById('m_priceJpy').value = item.priceJpy || '';
+    document.getElementById('m_qty').value = item.qty || 1;
     document.getElementById('m_customTwd').value = item.customTwd || '';
     document.getElementById('m_extraFee').value = item.extraFee || '';
     document.getElementById('m_payMethod').value = item.payMethod || 'card';
@@ -729,11 +749,12 @@
     const buyer = document.getElementById('m_buyer').value.trim();
     const title = document.getElementById('m_title').value.trim();
     const priceJpy = Number(document.getElementById('m_priceJpy').value) || 0;
+    const qty = Math.max(1, Number(document.getElementById('m_qty').value) || 1);
     const type = document.getElementById('m_type').value;
     const payMethod = document.getElementById('m_payMethod').value;
     const cardTwdInput = document.getElementById('m_cardTwdInput').value;
     const customTwd = document.getElementById('m_customTwd').value;
-    const { twd, costTwd, profitTwd, extraFee } = window.calcPrice('m_');
+    const { twd, costTwd, profitTwd, extraFee, baseSingleTwd } = window.calcPrice('m_');
 
     if (!buyer || !title) {
       alert('請填寫「購買人」與「商品名稱」！');
@@ -742,8 +763,8 @@
 
     try {
       await update(ref(db, `products/${editingKey}`), {
-        purchaseDate, payer, buyer, title, type, priceJpy, payMethod, extraFee,
-        cardTwdInput, customTwd,
+        purchaseDate, payer, buyer, title, type, priceJpy, qty, payMethod, extraFee,
+        cardTwdInput, customTwd, baseSingleTwd,
         priceTwd: twd, costTwd: costTwd, profitTwd: profitTwd,
         updatedAt: Date.now()
       });
@@ -785,16 +806,18 @@
       const tInfo = typeMap[item.type] || typeMap.merch;
       const payText = item.payMethod === 'card' ? '刷卡' : '付現';
       const itemPayer = item.payer || '未知';
+      const qtyStr = (item.qty && item.qty > 1) ? ` x${item.qty}` : '';
+      const totalJpy = (item.priceJpy || 0) * (item.qty || 1);
 
       entryHtml += `
         <div class="product-item">
           <div class="item-left">
             <div class="item-row-1">
               <span class="buyer-badge">${item.buyer}</span>
-              <span class="item-title">${item.title}</span>
+              <span class="item-title">${item.title}${qtyStr}</span>
             </div>
             <div class="item-row-2">
-              ${tInfo.icon} ${tInfo.name} <span>‧</span> ¥${item.priceJpy || 0} (${payText} NT$${item.costTwd}) <span>‧</span> ${itemPayer}
+              ${tInfo.icon} ${tInfo.name} <span>‧</span> ¥${totalJpy} (${payText} NT$${item.costTwd}) <span>‧</span> ${itemPayer}
             </div>
           </div>
           <div class="item-right">
@@ -884,19 +907,20 @@
             catItems.forEach(it => {
               catTotal += it.priceTwd;
               const extraDesc = it.extraFee ? ` (含加價$${it.extraFee})` : '';
+              const qtyDisplay = (it.qty && it.qty > 1) ? ` x ${it.qty}` : '';
               catItemsHtml += `
                 <div class="category-item">
-                  <span>• ${it.title}${extraDesc}</span>
+                  <span>• ${it.title}${qtyDisplay}${extraDesc}</span>
                   <strong>NT$ ${it.priceTwd}</strong>
                 </div>
               `;
-              catCopyText += `  • ${it.title}${extraDesc}：NT$ ${it.priceTwd}\n`;
+              catCopyText += `  • ${it.title}${qtyDisplay}${extraDesc}：NT$ ${it.priceTwd}\n`;
             });
 
             blocksHtml += `
               <div class="category-block ${tInfo.catClass}">
                 <div class="category-title">
-                  <span>${tInfo.icon} ${tInfo.name} (${catItems.length}件)</span>
+                  <span>${tInfo.icon} ${tInfo.name} (${catItems.length}筆)</span>
                   <span>小計 NT$ ${catTotal}</span>
                 </div>
                 ${catItemsHtml}
