@@ -182,67 +182,85 @@
     .btn-edit { background: #ECEFF1; color: #546E7A; border: none; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
     .btn-delete { background: #FFEBEE; color: #C62828; border: none; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
 
-    /* 🎨 對帳卡片視覺升級 (專屬品牌對帳單) */
-    .buyer-summary-wrapper { margin-bottom: 16px; }
+    /* 網頁上呈現：乾淨極簡的對帳卡片樣式 */
+    .buyer-summary-wrapper { margin-bottom: 12px; }
     .buyer-summary-card {
-      background: #FFFFFF;
-      border-radius: 16px;
-      border: 1px solid #E0E0E0;
-      padding: 16px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      padding: 14px;
       position: relative;
-      overflow: hidden;
     }
     
-    .bill-brand-header {
-      background: linear-gradient(135deg, var(--poke-red), #EF5350);
-      color: white;
-      text-align: center;
-      padding: 10px 8px;
-      margin: -16px -16px 14px -16px;
-      font-size: 0.88rem;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-      border-bottom: 3px solid var(--poke-yellow);
+    /* 預設隱藏設計元素的 Header & Footer，避免網頁視覺混亂 */
+    .bill-brand-header, .bill-footer-thanks {
+      display: none;
     }
 
     .buyer-header {
       display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 2px dashed #FFE082;
-      padding-bottom: 8px; margin-bottom: 12px;
+      border-bottom: 2px solid var(--poke-yellow-light);
+      padding-bottom: 6px; margin-bottom: 10px;
     }
-    .buyer-name { font-size: 1.05rem; font-weight: 800; color: #2C3E50; }
-    .buyer-total { font-size: 1.2rem; font-weight: 800; color: var(--poke-red); }
+    .buyer-name { font-size: 1rem; font-weight: bold; }
+    .buyer-total { font-size: 1.1rem; font-weight: bold; color: var(--poke-red); }
 
     .category-block {
-      background: #FAF9F6;
-      border-radius: 10px;
-      padding: 10px 12px;
-      margin-bottom: 10px;
-      border-left: 4px solid #B0BEC5;
+      background: #FAFAFA;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      border-left: 3px solid #B0BEC5;
     }
-    .category-block.cat-merch { border-left-color: #4FC3F7; background: #F4FBFX; }
-    .category-block.cat-gachapon { border-left-color: #81C784; background: #F3FAF4; }
-    .category-block.cat-ichiban { border-left-color: #FFB74D; background: #FFFDF7; }
+    .category-block.cat-merch { border-left-color: #90CAF9; }
+    .category-block.cat-gachapon { border-left-color: #A5D6A7; }
+    .category-block.cat-ichiban { border-left-color: #FFCC80; }
 
-    .category-title { font-size: 0.82rem; font-weight: bold; color: #546E7A; margin-bottom: 6px; display: flex; justify-content: space-between; }
-    .category-item { font-size: 0.88rem; display: flex; justify-content: space-between; margin-bottom: 4px; color: #37474F; }
-
-    .bill-footer-thanks {
-      text-align: center;
-      font-size: 0.72rem;
-      color: #90A4AE;
-      margin-top: 12px;
-      padding-top: 8px;
-      border-top: 1px solid #ECEFF1;
-      letter-spacing: 0.5px;
-    }
+    .category-title { font-size: 0.8rem; font-weight: bold; color: var(--text-sub); margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .category-item { font-size: 0.85rem; display: flex; justify-content: space-between; margin-bottom: 2px; }
 
     .action-btn-group { margin-top: 10px; }
     .btn-image {
       width: 100%; background: var(--poke-red); color: white; border: none;
-      padding: 11px; border-radius: 10px; font-size: 0.9rem; font-weight: bold;
-      cursor: pointer; box-shadow: 0 3px 8px rgba(229, 57, 53, 0.25);
+      padding: 8px; border-radius: 8px; font-size: 0.85rem; font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* 🎨 導出圖片專用：開啓精美樣式設計 */
+    .render-export-style {
+      padding: 18px !important;
+      border-radius: 16px !important;
+      border: 1px solid #E0E0E0 !important;
+      box-shadow: none !important;
+      background: #FFFFFF !important;
+    }
+    .render-export-style .bill-brand-header {
+      display: block !important;
+      background: linear-gradient(135deg, var(--poke-red), #EF5350) !important;
+      color: white !important;
+      text-align: center !important;
+      padding: 10px 8px !important;
+      margin: -18px -18px 14px -18px !important;
+      font-size: 0.88rem !important;
+      font-weight: bold !important;
+      letter-spacing: 0.5px !important;
+      border-bottom: 3px solid var(--poke-yellow) !important;
+    }
+    .render-export-style .buyer-header {
+      border-bottom: 2px dashed #FFE082 !important;
+      padding-bottom: 8px !important;
+      margin-bottom: 12px !important;
+    }
+    .render-export-style .buyer-name { font-size: 1.05rem !important; font-weight: 800 !important; color: #2C3E50 !important; }
+    .render-export-style .buyer-total { font-size: 1.2rem !important; font-weight: 800 !important; }
+    .render-export-style .bill-footer-thanks {
+      display: block !important;
+      text-align: center !important;
+      font-size: 0.72rem !important;
+      color: #90A4AE !important;
+      margin-top: 12px !important;
+      padding-top: 8px !important;
+      border-top: 1px solid #ECEFF1 !important;
     }
 
     /* 統計區 */
@@ -827,7 +845,7 @@
     }
   };
 
-  // 🎨 高畫質、極簡拍立得風對帳圖片渲染
+  // 📷 動態觸發：只有匯出圖片時才套用精美渲染樣式
   window.downloadBuyerImage = function(cardId, buyerName) {
     const cardElem = document.getElementById(cardId);
     if (!cardElem) return;
@@ -835,12 +853,16 @@
     const btnGroup = cardElem.querySelector('.action-btn-group');
     if (btnGroup) btnGroup.style.display = 'none';
 
+    // 暫時加上導出專用的視覺設計 Class
+    cardElem.classList.add('render-export-style');
+
     html2canvas(cardElem, {
       scale: 3, // 超高畫質
       backgroundColor: '#F8F9FA',
-      useCORS: true,
-      padding: 16
+      useCORS: true
     }).then(canvas => {
+      // 導出完畢，立刻移除視覺 Class 與恢復按鈕，讓網頁維持極簡
+      cardElem.classList.remove('render-export-style');
       if (btnGroup) btnGroup.style.display = 'block';
 
       const link = document.createElement('a');
@@ -848,6 +870,7 @@
       link.href = canvas.toDataURL('image/png');
       link.click();
     }).catch(err => {
+      cardElem.classList.remove('render-export-style');
       if (btnGroup) btnGroup.style.display = 'block';
       console.error(err);
       alert('圖片生成失敗，請再試一次！');
@@ -891,7 +914,7 @@
             <div class="twd-price">NT$ ${item.priceTwd}</div>
             <span class="profit-badge">賺 NT$${item.profitTwd}</span>
             <div class="action-btns">
-              <button class="btn-edit" onclick="editProductModal('${item.key}')">✏️️ 修改</button>
+              <button class="btn-edit" onclick="editProductModal('${item.key}')">✏ 修改</button>
               <button class="btn-delete" onclick="deleteProduct('${item.key}')">🗑️</button>
             </div>
           </div>
