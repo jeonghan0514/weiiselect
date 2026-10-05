@@ -35,6 +35,9 @@
     })();
   </script>
 
+  <!-- 載入網頁轉圖片套件 (html2canvas) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
   <style>
     :root {
       --poke-red: #E53935;
@@ -179,7 +182,7 @@
     .btn-edit { background: #ECEFF1; color: #546E7A; border: none; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
     .btn-delete { background: #FFEBEE; color: #C62828; border: none; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; cursor: pointer; }
 
-    /* 對帳區 */
+    /* 對帳區卡片 */
     .buyer-summary-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 14px; margin-bottom: 12px; }
     .buyer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--poke-yellow-light); padding-bottom: 6px; margin-bottom: 10px; }
     .buyer-name { font-size: 1rem; font-weight: bold; }
@@ -193,7 +196,8 @@
     .category-title { font-size: 0.8rem; font-weight: bold; color: var(--text-sub); margin-bottom: 4px; display: flex; justify-content: space-between; }
     .category-item { font-size: 0.85rem; display: flex; justify-content: space-between; margin-bottom: 2px; }
 
-    .btn-copy { margin-top: 8px; width: 100%; background: var(--poke-yellow); color: #37474F; border: none; padding: 8px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
+    .action-btn-group { margin-top: 10px; }
+    .btn-image { width: 100%; background: var(--poke-red); color: white; border: none; padding: 10px; border-radius: 8px; font-size: 0.88rem; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(229, 57, 53, 0.2); }
 
     /* 統計區 */
     .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
@@ -779,9 +783,31 @@
     }
   };
 
-  window.copyBuyerDetails = function(buyerName, total, copyText) {
-    const text = `【日本代購對帳單 - ${buyerName}】\n-------------------\n${copyText}-------------------\n合計台幣：NT$ ${total}`;
-    navigator.clipboard.writeText(text).then(() => alert(`已複製 ${buyerName} 的分類帳單！`));
+  // 匯出對帳單圖片功能
+  window.downloadBuyerImage = function(cardId, buyerName) {
+    const cardElem = document.getElementById(cardId);
+    if (!cardElem) return;
+
+    // 暫時隱藏按鈕避免被截圖進去
+    const btnGroup = cardElem.querySelector('.action-btn-group');
+    if (btnGroup) btnGroup.style.display = 'none';
+
+    html2canvas(cardElem, {
+      scale: 2, // 高畫質
+      backgroundColor: '#FFFFFF',
+      useCORS: true
+    }).then(canvas => {
+      if (btnGroup) btnGroup.style.display = 'block'; // 恢復按鈕顯示
+
+      const link = document.createElement('a');
+      link.download = `對帳單_${buyerName}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }).catch(err => {
+      if (btnGroup) btnGroup.style.display = 'block';
+      console.error(err);
+      alert('圖片生成失敗，請再試一次！');
+    });
   };
 
   window.renderProductList = function() {
@@ -888,10 +914,11 @@
       });
 
       let summaryHtml = '';
+      let index = 0;
       Object.keys(buyerMap).forEach(buyerName => {
         const group = buyerMap[buyerName];
         let blocksHtml = '';
-        let copyTextFull = '';
+        const cardId = `buyerCard_${index++}`;
 
         ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
           const catItems = group.categories[catKey];
@@ -899,7 +926,6 @@
             const tInfo = typeMap[catKey];
             let catTotal = 0;
             let catItemsHtml = '';
-            let catCopyText = `【${tInfo.icon} ${tInfo.name}】\n`;
 
             catItems.forEach(it => {
               catTotal += it.priceTwd;
@@ -911,7 +937,6 @@
                   <strong>NT$ ${it.priceTwd}</strong>
                 </div>
               `;
-              catCopyText += `  • ${it.title}${qtyDisplay}${extraDesc}：NT$ ${it.priceTwd}\n`;
             });
 
             blocksHtml += `
@@ -923,20 +948,21 @@
                 ${catItemsHtml}
               </div>
             `;
-            copyTextFull += `${catCopyText}  小計：NT$ ${catTotal}\n\n`;
           }
         });
 
         summaryHtml += `
-          <div class="buyer-summary-card">
+          <div class="buyer-summary-card" id="${cardId}">
             <div class="buyer-header">
               <span class="buyer-name">👤 ${buyerName}</span>
               <span class="buyer-total">總計 NT$ ${group.total}</span>
             </div>
             ${blocksHtml}
-            <button class="btn-copy" onclick="copyBuyerDetails('${buyerName}', ${group.total}, \`${copyTextFull}\`)">
-              📋 複製 ${buyerName} 的帳單
-            </button>
+            <div class="action-btn-group">
+              <button class="btn-image" onclick="downloadBuyerImage('${cardId}', '${buyerName}')">
+                📷 下載對帳圖片
+              </button>
+            </div>
           </div>
         `;
       });
