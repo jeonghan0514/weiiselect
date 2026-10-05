@@ -226,24 +226,31 @@
       cursor: pointer;
     }
 
-    /* 🎨 導出圖片專用：直角、滿版、含溫暖旅行結語 */
+    /* 🎨 導出圖片專用：修正字距散開與換行跑版問題 */
     .render-export-style {
-      padding: 18px !important;
+      padding: 16px !important;
       border-radius: 0px !important;
       border: none !important;
       box-shadow: none !important;
       background: #FFFFFF !important;
+      letter-spacing: normal !important; /* 防止字距被拉開 */
+      word-break: keep-all !important;
+    }
+    .render-export-style * {
+      letter-spacing: normal !important;
+      text-align-last: auto !important;
     }
     .render-export-style .bill-brand-header {
       display: block !important;
       background: linear-gradient(135deg, var(--poke-red), #EF5350) !important;
       color: white !important;
       text-align: center !important;
-      padding: 12px 8px !important;
-      margin: -18px -18px 14px -18px !important;
-      font-size: 0.95rem !important;
+      padding: 10px 4px !important;
+      margin: -16px -16px 12px -16px !important;
+      font-size: 0.85rem !important; /* 微調字級避免斷行 */
       font-weight: bold !important;
-      letter-spacing: 0.5px !important;
+      letter-spacing: 0px !important;
+      white-space: nowrap !important; /* 絕對不換行 */
       border-bottom: 3px solid var(--poke-yellow) !important;
     }
     .render-export-style .buyer-header {
@@ -251,18 +258,19 @@
       padding-bottom: 8px !important;
       margin-bottom: 12px !important;
     }
-    .render-export-style .buyer-name { font-size: 1.05rem !important; font-weight: 800 !important; color: #2C3E50 !important; }
-    .render-export-style .buyer-total { font-size: 1.2rem !important; font-weight: 800 !important; }
+    .render-export-style .buyer-name { font-size: 1rem !important; font-weight: 800 !important; color: #2C3E50 !important; }
+    .render-export-style .buyer-total { font-size: 1.15rem !important; font-weight: 800 !important; }
     .render-export-style .bill-footer-thanks {
       display: block !important;
       text-align: center !important;
-      font-size: 0.75rem !important;
+      font-size: 0.72rem !important;
       line-height: 1.5 !important;
       color: #78909C !important;
-      margin: 12px -18px -18px -18px !important;
-      padding: 12px 8px !important;
+      margin: 12px -16px -16px -16px !important;
+      padding: 10px 8px !important;
       background: #FAF9F6 !important;
       border-top: 1px solid #ECEFF1 !important;
+      white-space: normal !important;
     }
 
     /* 統計區 */
@@ -608,7 +616,7 @@
   </div>
 </div>
 
-<!-- 手機 PWA 專用：對帳單圖片彈出視窗 (長按儲存) -->
+<!-- 手機對帳單圖片彈出視窗 (長按儲存) -->
 <div id="imgPreviewModal" class="modal-overlay" style="display: none;">
   <div class="modal-container">
     <div class="modal-header">
@@ -877,12 +885,11 @@
     }
   };
 
-  // 📷 超強相容性：點擊立刻跳出 Modal，解決 iOS Safari/PWA 不反應問題
+  // 📷 修正 HTML2Canvas 渲染字距與斷行問題
   window.downloadBuyerImage = function(cardId, buyerName) {
     const cardElem = document.getElementById(cardId);
     if (!cardElem) return;
 
-    // 1. 先跳出彈窗，確保使用者一定看的到反應
     document.getElementById('previewTitle').innerText = `📷 ${buyerName} 的對帳單`;
     document.getElementById('previewTip').innerText = `⏳ 正在為您生成圖片，請稍候...`;
     document.getElementById('previewImg').style.display = 'none';
@@ -893,20 +900,19 @@
 
     cardElem.classList.add('render-export-style');
 
-    // 延遲 50ms 給 UI 渲染彈窗，避免阻塞
     setTimeout(() => {
       html2canvas(cardElem, {
         scale: 2.5,
         backgroundColor: '#FFFFFF',
         useCORS: true,
-        allowTaint: true
+        allowTaint: true,
+        letterRendering: true // 防止中文字距散開
       }).then(canvas => {
         cardElem.classList.remove('render-export-style');
         if (btnGroup) btnGroup.style.display = 'block';
 
         const imgData = canvas.toDataURL('image/png');
         
-        // 2. 將產出的圖片放入視窗中，讓使用者長按儲存
         const previewImg = document.getElementById('previewImg');
         previewImg.src = imgData;
         previewImg.style.display = 'block';
@@ -918,7 +924,7 @@
         console.error(err);
         document.getElementById('previewTip').innerText = `❌ 圖片生成失敗，請再試一次！`;
       });
-    }, 50);
+    }, 60);
   };
 
   window.renderProductList = function() {
@@ -959,7 +965,7 @@
             <span class="profit-badge">賺 NT$${item.profitTwd}</span>
             <div class="action-btns">
               <button class="btn-edit" onclick="editProductModal('${item.key}')">✏ 修改</button>
-              <button class="btn-delete" onclick="deleteProduct('${item.key}')">🗑️</button>
+              <button class="btn-delete" onclick="deleteProduct('${item.key}')">🗑️️</button>
             </div>
           </div>
         </div>
