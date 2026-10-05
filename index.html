@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>微物所 weii select｜日本連線代購 v2.1</title>
+  <title>微物所 weii select｜日本連線代購 v2.2</title>
 
   <!-- iOS 主畫面圖示最佳化設定 -->
   <link rel="apple-touch-icon" id="appleIcon" href="logo.jpg">
@@ -836,7 +836,7 @@
     }
   };
 
-  // 🎨 純 Canvas 向量畫布 (完美比照電腦版寬敞行距與留白)
+  // 🎨 精準比例控制：拉開買家與項目行距 + 縮減謝語上下空格
   window.downloadCanvasDirect = function(buyerName) {
     document.getElementById('previewTitle').innerText = `📷 ${buyerName} 的對帳單`;
     document.getElementById('previewTip').innerText = `⏳ 正在繪製高清圖片，請稍候...`;
@@ -856,17 +856,21 @@
     });
 
     const W = 1000;
-    let currentY = 130 + 10 + 140; // Header(130) + YellowBar(10) + Buyer Row(140)
+    const header_h = 120;
+    const banner_bar_h = 10;
+    const buyer_row_h = 150; // 加大買家與下方卡片行距
 
+    let categories_h = 0;
     ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
       const list = grouped[catKey];
       if (list.length > 0) {
-        currentY += (60 + list.length * 70) + 40; // 加寬卡片與行距留白
+        // 卡片內部：top(35) + title(35) + gap(30) + items(len*65) + bottom(35)
+        categories_h += (35 + 35 + 30 + list.length * 65 + 35) + 30;
       }
     });
-    currentY += 200; // Footer 高度
 
-    const H = currentY;
+    const footer_h = 140; // 縮減底部謝語高度（空格變小）
+    const H = header_h + banner_bar_h + buyer_row_h + categories_h + footer_h;
 
     const canvas = document.createElement('canvas');
     canvas.width = W;
@@ -890,7 +894,7 @@
     ctx.fillText('✨ 微物所 weii select ｜ 10/4-10/10日本連線', W / 2, 60);
 
     // 買家資訊列
-    let Y = 175;
+    let Y = 170;
     ctx.textAlign = 'left';
     ctx.fillStyle = '#1A252C';
     ctx.font = 'bold 42px "Noto Sans TC", sans-serif';
@@ -911,7 +915,7 @@
     ctx.stroke();
     ctx.setLineDash([]);
 
-    Y += 45;
+    Y += 50; // 拉大黃色虛線到卡片之間的距離
 
     // 分類卡片
     ['merch', 'gachapon', 'ichiban'].forEach(catKey => {
@@ -921,9 +925,10 @@
         let catTotal = 0;
         list.forEach(i => catTotal += (i.priceTwd || 0));
 
-        const catPaddingTop = 32;
-        const catPaddingBottom = 32;
-        const blockHeight = catPaddingTop + 45 + (list.length * 70) + catPaddingBottom;
+        const catPaddingTop = 35;
+        const catPaddingBottom = 35;
+        const gapTitleToItem = 30; // 標題與項目的間距
+        const blockHeight = catPaddingTop + 35 + gapTitleToItem + (list.length * 65) + catPaddingBottom;
 
         ctx.fillStyle = '#FAFAFA';
         ctx.beginPath();
@@ -944,8 +949,9 @@
         ctx.textAlign = 'right';
         ctx.fillText(`小計 NT$ ${catTotal}`, W - 80, innerY);
 
+        innerY += 35 + gapTitleToItem;
+
         list.forEach(item => {
-          innerY += 70; // 拉寬項目間距至 70px
           const qtyStr = (item.qty && item.qty > 1) ? ` x ${item.qty}` : '';
           const extraStr = item.extraFee ? ` (含加價$${item.extraFee})` : '';
 
@@ -957,13 +963,15 @@
           ctx.textAlign = 'right';
           ctx.font = 'bold 34px "Noto Sans TC", sans-serif';
           ctx.fillText(`NT$ ${item.priceTwd}`, W - 80, innerY);
+
+          innerY += 65;
         });
 
-        Y += blockHeight + 40; // 卡片下方留白增加至 40px
+        Y += blockHeight + 30;
       }
     });
 
-    // 頁尾感謝謝語 (拉寬行距)
+    // 頁尾感謝謝語（縮減上下留白，不再太空）
     const footerH = H - Y;
     ctx.fillStyle = '#FAF9F6';
     ctx.fillRect(0, Y, W, footerH);
@@ -978,8 +986,8 @@
     ctx.textAlign = 'center';
     ctx.fillStyle = '#78909C';
     ctx.font = '500 28px "Noto Sans TC", sans-serif';
-    ctx.fillText('🌸 謝謝大家一路陪著「微物所」一起旅行 ✈️', W / 2, Y + 65);
-    ctx.fillText('這趟旅程也因為有大家，變得更加有意義 💕✨', W / 2, Y + 125);
+    ctx.fillText('🌸 謝謝大家一路陪著「微物所」一起旅行 ✈️', W / 2, Y + 45);
+    ctx.fillText('這趟旅程也因為有大家，變得更加有意義 💕✨', W / 2, Y + 90);
 
     setTimeout(() => {
       const imgData = canvas.toDataURL('image/png');
