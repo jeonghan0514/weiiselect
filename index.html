@@ -192,7 +192,7 @@
       position: relative;
     }
     
-    /* 預設隱藏設計元素的 Header & Footer，避免網頁視覺混亂 */
+    /* 預設隱藏設計元素的 Header & Footer */
     .bill-brand-header, .bill-footer-thanks {
       display: none;
     }
@@ -226,11 +226,11 @@
       cursor: pointer;
     }
 
-    /* 🎨 導出圖片專用：開啓精美樣式設計 */
+    /* 🎨 導出圖片專用：直角、滿版、無白邊設計 */
     .render-export-style {
       padding: 18px !important;
-      border-radius: 16px !important;
-      border: 1px solid #E0E0E0 !important;
+      border-radius: 0px !important; /* 銳利直角 */
+      border: none !important;      /* 移除邊框 */
       box-shadow: none !important;
       background: #FFFFFF !important;
     }
@@ -239,9 +239,9 @@
       background: linear-gradient(135deg, var(--poke-red), #EF5350) !important;
       color: white !important;
       text-align: center !important;
-      padding: 10px 8px !important;
+      padding: 12px 8px !important;
       margin: -18px -18px 14px -18px !important;
-      font-size: 0.88rem !important;
+      font-size: 0.92rem !important;
       font-weight: bold !important;
       letter-spacing: 0.5px !important;
       border-bottom: 3px solid var(--poke-yellow) !important;
@@ -256,10 +256,11 @@
     .render-export-style .bill-footer-thanks {
       display: block !important;
       text-align: center !important;
-      font-size: 0.72rem !important;
+      font-size: 0.75rem !important;
       color: #90A4AE !important;
-      margin-top: 12px !important;
-      padding-top: 8px !important;
+      margin: 12px -18px -18px -18px !important;
+      padding: 10px 8px !important;
+      background: #FAFAFA !important;
       border-top: 1px solid #ECEFF1 !important;
     }
 
@@ -845,7 +846,7 @@
     }
   };
 
-  // 📷 動態觸發：只有匯出圖片時才套用精美渲染樣式
+  // 📷 動態觸發：只有匯出圖片時才套用無圓角、滿版設計
   window.downloadBuyerImage = function(cardId, buyerName) {
     const cardElem = document.getElementById(cardId);
     if (!cardElem) return;
@@ -853,15 +854,13 @@
     const btnGroup = cardElem.querySelector('.action-btn-group');
     if (btnGroup) btnGroup.style.display = 'none';
 
-    // 暫時加上導出專用的視覺設計 Class
     cardElem.classList.add('render-export-style');
 
     html2canvas(cardElem, {
       scale: 3, // 超高畫質
-      backgroundColor: '#F8F9FA',
+      backgroundColor: '#FFFFFF', // 滿版白色
       useCORS: true
     }).then(canvas => {
-      // 導出完畢，立刻移除視覺 Class 與恢復按鈕，讓網頁維持極簡
       cardElem.classList.remove('render-export-style');
       if (btnGroup) btnGroup.style.display = 'block';
 
