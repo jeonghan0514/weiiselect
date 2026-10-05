@@ -226,11 +226,11 @@
       cursor: pointer;
     }
 
-    /* 🎨 導出圖片專用：直角、滿版、無白邊設計 */
+    /* 🎨 導出圖片專用：直角、滿版、含溫暖旅行結語 */
     .render-export-style {
       padding: 18px !important;
-      border-radius: 0px !important; /* 銳利直角 */
-      border: none !important;      /* 移除邊框 */
+      border-radius: 0px !important;
+      border: none !important;
       box-shadow: none !important;
       background: #FFFFFF !important;
     }
@@ -241,7 +241,7 @@
       text-align: center !important;
       padding: 12px 8px !important;
       margin: -18px -18px 14px -18px !important;
-      font-size: 0.92rem !important;
+      font-size: 0.95rem !important;
       font-weight: bold !important;
       letter-spacing: 0.5px !important;
       border-bottom: 3px solid var(--poke-yellow) !important;
@@ -257,10 +257,11 @@
       display: block !important;
       text-align: center !important;
       font-size: 0.75rem !important;
-      color: #90A4AE !important;
+      line-height: 1.5 !important;
+      color: #78909C !important;
       margin: 12px -18px -18px -18px !important;
-      padding: 10px 8px !important;
-      background: #FAFAFA !important;
+      padding: 12px 8px !important;
+      background: #FAF9F6 !important;
       border-top: 1px solid #ECEFF1 !important;
     }
 
@@ -846,7 +847,7 @@
     }
   };
 
-  // 📷 動態觸發：只有匯出圖片時才套用無圓角、滿版設計
+  // 📷 動態觸發：匯出圖片（含溫暖旅行結語）
   window.downloadBuyerImage = function(cardId, buyerName) {
     const cardElem = document.getElementById(cardId);
     if (!cardElem) return;
@@ -857,8 +858,8 @@
     cardElem.classList.add('render-export-style');
 
     html2canvas(cardElem, {
-      scale: 3, // 超高畫質
-      backgroundColor: '#FFFFFF', // 滿版白色
+      scale: 3,
+      backgroundColor: '#FFFFFF',
       useCORS: true
     }).then(canvas => {
       cardElem.classList.remove('render-export-style');
@@ -1020,13 +1021,16 @@
         summaryHtml += `
           <div class="buyer-summary-wrapper">
             <div class="buyer-summary-card" id="${cardId}">
-              <div class="bill-brand-header">✨ 微物所 weii select｜日本連線對帳單</div>
+              <div class="bill-brand-header">✨ 微物所 weii select｜10/4-10/10日本連線</div>
               <div class="buyer-header">
                 <span class="buyer-name">👤 買家：${buyerName}</span>
                 <span class="buyer-total">總計 NT$ ${group.total}</span>
               </div>
               ${blocksHtml}
-              <div class="bill-footer-thanks">～ Thank you for shopping with us 💕 ～</div>
+              <div class="bill-footer-thanks">
+                🌸 謝謝大家一路陪著「微物所」一起旅行 ✈️<br>
+                這趟旅程也因為有大家，變得更加有意義 💕✨
+              </div>
               <div class="action-btn-group">
                 <button class="btn-image" onclick="downloadBuyerImage('${cardId}', '${buyerName}')">
                   📷 下載對帳圖片
