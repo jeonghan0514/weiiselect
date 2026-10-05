@@ -226,31 +226,27 @@
       cursor: pointer;
     }
 
-    /* 🎨 導出圖片專用：修正字距散開與換行跑版問題 */
+    /* 🎨 導出圖片專用：固定 480px 桌機標準寬度，確保跨平台完全一致 */
     .render-export-style {
-      padding: 16px !important;
+      width: 480px !important;
+      min-width: 480px !important;
+      max-width: 480px !important;
+      padding: 18px !important;
       border-radius: 0px !important;
       border: none !important;
       box-shadow: none !important;
       background: #FFFFFF !important;
-      letter-spacing: normal !important; /* 防止字距被拉開 */
-      word-break: keep-all !important;
-    }
-    .render-export-style * {
-      letter-spacing: normal !important;
-      text-align-last: auto !important;
     }
     .render-export-style .bill-brand-header {
       display: block !important;
       background: linear-gradient(135deg, var(--poke-red), #EF5350) !important;
       color: white !important;
       text-align: center !important;
-      padding: 10px 4px !important;
-      margin: -16px -16px 12px -16px !important;
-      font-size: 0.85rem !important; /* 微調字級避免斷行 */
+      padding: 12px 8px !important;
+      margin: -18px -18px 14px -18px !important;
+      font-size: 0.95rem !important;
       font-weight: bold !important;
-      letter-spacing: 0px !important;
-      white-space: nowrap !important; /* 絕對不換行 */
+      letter-spacing: 0.5px !important;
       border-bottom: 3px solid var(--poke-yellow) !important;
     }
     .render-export-style .buyer-header {
@@ -258,19 +254,18 @@
       padding-bottom: 8px !important;
       margin-bottom: 12px !important;
     }
-    .render-export-style .buyer-name { font-size: 1rem !important; font-weight: 800 !important; color: #2C3E50 !important; }
-    .render-export-style .buyer-total { font-size: 1.15rem !important; font-weight: 800 !important; }
+    .render-export-style .buyer-name { font-size: 1.05rem !important; font-weight: 800 !important; color: #2C3E50 !important; }
+    .render-export-style .buyer-total { font-size: 1.2rem !important; font-weight: 800 !important; }
     .render-export-style .bill-footer-thanks {
       display: block !important;
       text-align: center !important;
-      font-size: 0.72rem !important;
+      font-size: 0.75rem !important;
       line-height: 1.5 !important;
       color: #78909C !important;
-      margin: 12px -16px -16px -16px !important;
-      padding: 10px 8px !important;
+      margin: 12px -18px -18px -18px !important;
+      padding: 12px 8px !important;
       background: #FAF9F6 !important;
       border-top: 1px solid #ECEFF1 !important;
-      white-space: normal !important;
     }
 
     /* 統計區 */
@@ -885,7 +880,7 @@
     }
   };
 
-  // 📷 修正 HTML2Canvas 渲染字距與斷行問題
+  // 📷 跨裝置一致修復：強制設定視窗渲染寬度為 480px，手機截圖完全比照電腦版
   window.downloadBuyerImage = function(cardId, buyerName) {
     const cardElem = document.getElementById(cardId);
     if (!cardElem) return;
@@ -902,11 +897,12 @@
 
     setTimeout(() => {
       html2canvas(cardElem, {
-        scale: 2.5,
+        scale: 3,
+        width: 480, // 強制固定寬度 480px，絕不因手機寬度太窄而擠壓
+        windowWidth: 480,
         backgroundColor: '#FFFFFF',
         useCORS: true,
-        allowTaint: true,
-        letterRendering: true // 防止中文字距散開
+        allowTaint: true
       }).then(canvas => {
         cardElem.classList.remove('render-export-style');
         if (btnGroup) btnGroup.style.display = 'block';
@@ -965,7 +961,7 @@
             <span class="profit-badge">賺 NT$${item.profitTwd}</span>
             <div class="action-btns">
               <button class="btn-edit" onclick="editProductModal('${item.key}')">✏ 修改</button>
-              <button class="btn-delete" onclick="deleteProduct('${item.key}')">🗑️️</button>
+              <button class="btn-delete" onclick="deleteProduct('${item.key}')">🗑</button>
             </div>
           </div>
         </div>
